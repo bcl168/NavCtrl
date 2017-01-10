@@ -13,20 +13,36 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    
     // Override point for customization after application launch.
-    UIViewController *rootController =
-    [[CompanyViewController alloc]
-     initWithNibName:@"CompanyViewController" bundle:nil];
     
-    self.navigationController = [[UINavigationController alloc]
-                            initWithRootViewController:rootController];
+    // Set the color of the title to white for all navigation bar
+    [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                          [UIColor whiteColor], NSForegroundColorAttributeName, nil]];
     
-    self.window = [[UIWindow alloc]
-                   initWithFrame:[[UIScreen mainScreen] bounds]];
+    // Set the background color to greenish for all navigation bar
+    [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed: (float) 0x7E / 255.0
+                                                                  green: (float) 0xB2 / 255.0
+                                                                   blue: (float) 0x38 / 255.0
+                                                                  alpha: 1.0]];
+    
+    // Set the foreground color to white for all navigation bar
+    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+    
+    UIViewController *rootController = [[CompanyViewController alloc] initWithNibName:@"CompanyViewController" bundle:nil];
+
+    self.navigationController = [[UINavigationController alloc] initWithRootViewController:rootController];
+
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.backgroundColor = UIColor.blackColor;
 //  self.window addSubview:self.navigationController.view];
+    
+    // setup initial view controller
     [self.window setRootViewController:self.navigationController];
+    
+    // Make the window visible and active
     [self.window makeKeyAndVisible];
+    
+    [rootController release];
     return YES;
     
     
