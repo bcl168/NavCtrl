@@ -26,6 +26,8 @@
 		60C0F8EE1E204BE300EEA122 /* CompanyLogos.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60C0F8ED1E204BE300EEA122 /* CompanyLogos.xcassets */; };
 		60F048641E24052A00A1E942 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F048631E24052A00A1E942 /* DetailViewController.m */; };
 		60F048691E2419FE00A1E942 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60F048681E2419FE00A1E942 /* WebKit.framework */; };
+		60FA71D81E25630300D5EC96 /* Company.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FA71D71E25630300D5EC96 /* Company.m */; };
+		60FA71DB1E2563BD00D5EC96 /* Product.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FA71DA1E2563BD00D5EC96 /* Product.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +67,10 @@
 		60F048621E24052A00A1E942 /* DetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailViewController.h; sourceTree = "<group>"; };
 		60F048631E24052A00A1E942 /* DetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
 		60F048681E2419FE00A1E942 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		60FA71D61E25630300D5EC96 /* Company.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Company.h; sourceTree = "<group>"; };
+		60FA71D71E25630300D5EC96 /* Company.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Company.m; sourceTree = "<group>"; };
+		60FA71D91E2563BD00D5EC96 /* Product.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Product.h; sourceTree = "<group>"; };
+		60FA71DA1E2563BD00D5EC96 /* Product.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Product.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,6 +167,10 @@
 				483796CC1BCBF7C70062D5AB /* ParentViewController */,
 				483796CD1BCBF7EB0062D5AB /* ProductViewController */,
 				48A656BB18163BF200746D36 /* Supporting Files */,
+				60FA71D61E25630300D5EC96 /* Company.h */,
+				60FA71D71E25630300D5EC96 /* Company.m */,
+				60FA71D91E2563BD00D5EC96 /* Product.h */,
+				60FA71DA1E2563BD00D5EC96 /* Product.m */,
 			);
 			path = NavCtrl;
 			sourceTree = "<group>";
@@ -304,7 +314,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60FA71DB1E2563BD00D5EC96 /* Product.m in Sources */,
 				48A656E618163C1B00746D36 /* CompanyViewController.m in Sources */,
+				60FA71D81E25630300D5EC96 /* Company.m in Sources */,
 				60F048641E24052A00A1E942 /* DetailViewController.m in Sources */,
 				48A656C518163BF200746D36 /* NavControllerAppDelegate.m in Sources */,
 				48A656C118163BF200746D36 /* main.m in Sources */,

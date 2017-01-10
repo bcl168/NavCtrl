@@ -15,7 +15,6 @@
 
 @property (nonatomic, retain) NSString *stockSymbol;
 @property (nonatomic, retain) NSMutableArray *products;
-@property (nonatomic, retain) NSMutableArray *productURLs;
 
 @property (nonatomic, retain) DetailViewController *detailViewController;
 

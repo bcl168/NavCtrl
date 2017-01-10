@@ -9,6 +9,7 @@
 
 #import <WebKit/WebKit.h>
 #import "ProductViewController.h"
+#import "Product.h"
 
 
 #define LARGE_LOGO_SIZE     180.0
@@ -111,7 +112,8 @@ const CGFloat HEADER_LABEL_HEIGHT = 36.0;
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
 
     // Configure the cell...
-    cell.textLabel.text = self.products[indexPath.row];
+    Product *product = self.products[indexPath.row];
+    cell.textLabel.text = product.name;
     return cell;
 }
 
@@ -165,7 +167,6 @@ const CGFloat HEADER_LABEL_HEIGHT = 36.0;
     if (editingStyle == UITableViewCellEditingStyleDelete)
     {
         [self.products removeObjectAtIndex:indexPath.row];
-        [self.productURLs removeObjectAtIndex:indexPath.row];
         
         // Delete the row from the data source
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
@@ -183,13 +184,9 @@ const CGFloat HEADER_LABEL_HEIGHT = 36.0;
     if (fromIndexPath == toIndexPath)
         return;
 
-    NSMutableArray *tempArray = self.products[fromIndexPath.row];
+    Product *temp = self.products[fromIndexPath.row];
     [self.products removeObjectAtIndex:fromIndexPath.row];
-    [self.products insertObject:tempArray atIndex:toIndexPath.row];
-
-    tempArray = self.productURLs[fromIndexPath.row];
-    [self.productURLs removeObjectAtIndex:fromIndexPath.row];
-    [self.productURLs insertObject:tempArray atIndex:toIndexPath.row];
+    [self.products insertObject:temp atIndex:toIndexPath.row];
 }
 
 
@@ -215,7 +212,8 @@ const CGFloat HEADER_LABEL_HEIGHT = 36.0;
     // Pass the selected object to the new view controller.
     self.detailViewController = [[DetailViewController alloc] init];
 
-    self.detailViewController.productURL = self.productURLs[indexPath.row];
+    Product *product = self.products[indexPath.row];
+    self.detailViewController.productURL = product.url;
     
     // Push the view controller.
     [self.navigationController pushViewController:_detailViewController animated:YES];

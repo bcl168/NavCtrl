@@ -9,6 +9,7 @@
 
 #import "CompanyViewController.h"
 #import "ProductViewController.h"
+#import "Company.h"
 
 
 @interface CompanyViewController ()
@@ -18,10 +19,6 @@
 @implementation CompanyViewController
 {
     NSMutableArray *_companies;
-    NSMutableArray *_stockSymbols;
-    NSMutableArray *_stockPrices;
-    NSMutableArray *_productsMatrix;
-    NSMutableArray *_productURLsMatrix;
 }
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -41,10 +38,13 @@
 
 - (void)viewDidLoad
 {
+    Company *company;
+    Product *product;
+
     [super viewDidLoad];
 
     // Uncomment the following line to preserve selection between presentations.
-     self.clearsSelectionOnViewWillAppear = NO;
+    self.clearsSelectionOnViewWillAppear = NO;
  
     // Add edit button on the left
     self.navigationItem.leftBarButtonItem = self.editButtonItem;
@@ -52,70 +52,38 @@
     self.title = @"Stock Tracker";
     
     _companies = [[NSMutableArray alloc] init];
-    [_companies addObject:@"Apple"];
-    [_companies addObject:@"Google"];
-    [_companies addObject:@"Twitter"];
-    [_companies addObject:@"Tesla"];
-    
-    _stockSymbols = [[NSMutableArray alloc] init];
-    [_stockSymbols addObject:@"APPL"];
-    [_stockSymbols addObject:@"GOOG"];
-    [_stockSymbols addObject:@"TWTR"];
-    [_stockSymbols addObject:@"TSLA"];
-    
-    _stockPrices = [[NSMutableArray alloc] init];
-    [_stockPrices addObject:@"$96.60"];
-    [_stockPrices addObject:@"$708.01"];
-    [_stockPrices addObject:@"$16.93"];
-    [_stockPrices addObject:@"$175.33"];
-    
-    _productsMatrix = [[NSMutableArray alloc] init];
-    
-    NSMutableArray *products = [[NSMutableArray alloc] init];
-    [products addObject:@"MacBook Pro"];
-    [products addObject:@"iPhone"];
-    [products addObject:@"iPad"];
-    [products addObject:@"Watch"];
-    [_productsMatrix addObject:products];
 
-    products = [[NSMutableArray alloc] init];
-    [products addObject:@"Pixel"];
-    [products addObject:@"Chromecast"];
-    [products addObject:@"Nexus"];
-    [_productsMatrix addObject:products];
+    company = [[Company alloc] initWithName:@"Apple" andStockSymbol:@"APPL" andStockPrice:96.6];
+    [_companies addObject:company];
+    product = [[Product alloc] initWithName:@"MacBook Pro" andURL:@"https://www.apple.com/macbook-pro/"];
+    [company.products addObject:product];
+    product = [[Product alloc] initWithName:@"iPhone" andURL:@"https://www.apple.com/iphone/"];
+    [company.products addObject:product];
+    product = [[Product alloc] initWithName:@"iPad" andURL:@"https://www.apple.com/ipad/"];
+    [company.products addObject:product];
+    product = [[Product alloc] initWithName:@"Watch" andURL:@"https://www.apple.com/watch/"];
+    [company.products addObject:product];
 
-    products = [[NSMutableArray alloc] init];
-    [_productsMatrix addObject:products];
-    
-    products = [[NSMutableArray alloc] init];
-    [products addObject:@"Model S"];
-    [products addObject:@"Model X"];
-    [products addObject:@"Model 3"];
-    [_productsMatrix addObject:products];
+    company = [[Company alloc] initWithName:@"Google" andStockSymbol:@"GOOG" andStockPrice:708.01];
+    [_companies addObject:company];
+    product = [[Product alloc] initWithName:@"Pixel" andURL:@"https://madeby.google.com/phone/"];
+    [company.products addObject:product];
+    product = [[Product alloc] initWithName:@"Chromecast" andURL:@"https://chromecast.com/chromecast/"];
+    [company.products addObject:product];
+    product = [[Product alloc] initWithName:@"Nexus" andURL:@"https://www.google.com/nexus/"];
+    [company.products addObject:product];
 
-    _productURLsMatrix = [[NSMutableArray alloc] init];
-    
-    NSMutableArray *URLs = [[NSMutableArray alloc] init];
-    [URLs addObject:@"https://www.apple.com/macbook-pro/"];
-    [URLs addObject:@"https://www.apple.com/iphone/"];
-    [URLs addObject:@"https://www.apple.com/ipad/"];
-    [URLs addObject:@"https://www.apple.com/watch/"];
-    [_productURLsMatrix addObject:URLs];
-    
-    URLs = [[NSMutableArray alloc] init];
-    [URLs addObject:@"https://madeby.google.com/phone/"];
-    [URLs addObject:@"https://chromecast.com/chromecast/"];
-    [URLs addObject:@"https://www.google.com/nexus/"];
-    [_productURLsMatrix addObject:URLs];
+    company = [[Company alloc] initWithName:@"Twitter" andStockSymbol:@"TWTR" andStockPrice:16.93];
+    [_companies addObject:company];
 
-    URLs = [[NSMutableArray alloc] init];
-    [_productURLsMatrix addObject:URLs];
-    
-    URLs = [[NSMutableArray alloc] init];
-    [URLs addObject:@"https://www.tesla.com/models"];
-    [URLs addObject:@"https://www.tesla.com/modelx"];
-    [URLs addObject:@"https://www.tesla.com/model3"];
-    [_productURLsMatrix addObject:URLs];
+    company = [[Company alloc] initWithName:@"Tesla" andStockSymbol:@"TSLA" andStockPrice:175.33];
+    [_companies addObject:company];
+    product = [[Product alloc] initWithName:@"Model S" andURL:@"https://www.tesla.com/models"];
+    [company.products addObject:product];
+    product = [[Product alloc] initWithName:@"Model X" andURL:@"https://www.tesla.com/modelx"];
+    [company.products addObject:product];
+    product = [[Product alloc] initWithName:@"Model 3" andURL:@"https://www.tesla.com/model3"];
+    [company.products addObject:product];
 }
 
 - (void)didReceiveMemoryWarning
@@ -153,10 +121,10 @@
     }
     
     // Configure the cell...
-    NSString *companyName = _companies[indexPath.row];
-    cell.imageView.image = [UIImage imageNamed:companyName];
-    cell.textLabel.text = [NSString stringWithFormat:@"%@ (%@)", companyName, _stockSymbols[indexPath.row]];
-    cell.detailTextLabel.text = _stockPrices[indexPath.row];
+    Company *company = _companies[indexPath.row];
+    cell.imageView.image = [UIImage imageNamed:company.name];
+    cell.textLabel.text = [NSString stringWithFormat:@"%@ (%@)", company.name, company.stockSymbol];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"$%.2f", company.stockPrice];
     
     return cell;
 }
@@ -177,10 +145,6 @@
     if (editingStyle == UITableViewCellEditingStyleDelete)
     {
         [_companies removeObjectAtIndex:indexPath.row];
-        [_stockSymbols removeObjectAtIndex:indexPath.row];
-        [_stockPrices removeObjectAtIndex:indexPath.row];
-        [_productsMatrix removeObjectAtIndex:indexPath.row];
-        [_productURLsMatrix removeObjectAtIndex:indexPath.row];
         
         // Delete the row from the data source
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
@@ -199,25 +163,9 @@
     if (fromIndexPath == toIndexPath)
         return;
     
-    NSString *tempString = _companies[fromIndexPath.row];
+    Company *temp = _companies[fromIndexPath.row];
     [_companies removeObjectAtIndex:fromIndexPath.row];
-    [_companies insertObject:tempString atIndex:toIndexPath.row];
-    
-    tempString = _stockSymbols[fromIndexPath.row];
-    [_stockSymbols removeObjectAtIndex:fromIndexPath.row];
-    [_stockSymbols insertObject:tempString atIndex:toIndexPath.row];
-    
-    tempString = _stockPrices[fromIndexPath.row];
-    [_stockPrices removeObjectAtIndex:fromIndexPath.row];
-    [_stockPrices insertObject:tempString atIndex:toIndexPath.row];
-    
-    NSMutableArray *tempArray = _productsMatrix[fromIndexPath.row];
-    [_productsMatrix removeObjectAtIndex:fromIndexPath.row];
-    [_productsMatrix insertObject:tempArray atIndex:toIndexPath.row];
-    
-    tempArray = _productURLsMatrix[fromIndexPath.row];
-    [_productURLsMatrix removeObjectAtIndex:fromIndexPath.row];
-    [_productURLsMatrix insertObject:tempArray atIndex:toIndexPath.row];
+    [_companies insertObject:temp atIndex:toIndexPath.row];
 }
 
 
@@ -236,10 +184,10 @@
 // In a xib-based application, navigation from a table can be handled in -tableView:didSelectRowAtIndexPath:
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    self.productViewController.title = _companies[indexPath.row];
-    self.productViewController.stockSymbol = _stockSymbols[indexPath.row];
-    self.productViewController.products = _productsMatrix[indexPath.row];
-    self.productViewController.productURLs = _productURLsMatrix[indexPath.row];
+    Company *company = _companies[indexPath.row];
+    self.productViewController.title = company.name;
+    self.productViewController.stockSymbol = company.stockSymbol;
+    self.productViewController.products = company.products;
 
     [self.navigationController pushViewController:self.productViewController animated:YES];
 }
