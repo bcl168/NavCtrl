@@ -28,6 +28,8 @@
     // Set the foreground color to white for all navigation bar
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     
+    [[UINavigationBar appearance] setBarStyle:UIBarStyleBlack];
+    
     UIViewController *rootController = [[CompanyViewController alloc] initWithNibName:@"CompanyViewController" bundle:nil];
 
     self.navigationController = [[UINavigationController alloc] initWithRootViewController:rootController];

@@ -10,22 +10,46 @@
 #import "Product.h"
 
 
+//////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Method that implements the designated initializer.
+//
+//////////////////////////////////////////////////////////////////////////////////////////
 @implementation Product
 
--(instancetype)initWithName:(NSString *)name andURL:(NSString *)url
+-(instancetype)initWithName:(NSString *)name
+                     andURL:(NSString *)url
 {
     if (self = [super init])
     {
-        _name = name;
-        _url = url;
+        _name = [name copy];
+        _url = [url copy];
     }
     
     return self;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Method that implements the basic initializer.
+//
+//////////////////////////////////////////////////////////////////////////////////////////
 -(instancetype)init
 {
     return [self initWithName:nil andURL:nil];
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Protocol method to help with deep copying.
+//
+//////////////////////////////////////////////////////////////////////////////////////////
+- (id)copyWithZone:(NSZone *)zone
+{
+    Product *copy = [[Product allocWithZone:zone]
+                               initWithName:_name
+                                     andURL:_url];
+    return copy;
 }
 
 @end

@@ -10,7 +10,7 @@
 #import <Foundation/Foundation.h>
 
 
-@interface Product : NSObject
+@interface Product : NSObject<NSCopying>
 
 @property (nonatomic, retain) NSString *name;
 @property (nonatomic, retain) NSString *url;

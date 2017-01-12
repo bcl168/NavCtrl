@@ -11,7 +11,7 @@
 #import "Product.h"
 
 
-@interface Company : NSObject
+@interface Company : NSObject<NSCopying>
 
 @property (nonatomic, retain) NSString *name;
 @property (nonatomic, retain) NSString *stockSymbol;
