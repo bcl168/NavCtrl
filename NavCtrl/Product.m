@@ -10,20 +10,22 @@
 #import "Product.h"
 
 
+@implementation Product
+
 //////////////////////////////////////////////////////////////////////////////////////////
 //
 //  Method that implements the designated initializer.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-@implementation Product
-
 -(instancetype)initWithName:(NSString *)name
                      andURL:(NSString *)url
+                andImageURL:(NSString *)imageURL
 {
     if (self = [super init])
     {
         _name = [name copy];
         _url = [url copy];
+        _imageURL = [imageURL copy];
     }
     
     return self;
@@ -36,7 +38,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////
 -(instancetype)init
 {
-    return [self initWithName:nil andURL:nil];
+    return [self initWithName:nil andURL:nil andImageURL:nil];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -46,9 +48,9 @@
 //////////////////////////////////////////////////////////////////////////////////////////
 - (id)copyWithZone:(NSZone *)zone
 {
-    Product *copy = [[Product allocWithZone:zone]
-                               initWithName:_name
-                                     andURL:_url];
+    Product *copy = [[Product allocWithZone:zone] initWithName:_name
+                                                        andURL:_url
+                                                   andImageURL:_imageURL];
     return copy;
 }
 

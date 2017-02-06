@@ -17,7 +17,7 @@
     
     // Set the color of the title to white for all navigation bar
     [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                          [UIColor whiteColor], NSForegroundColorAttributeName, nil]];
+                                                          UIColor.whiteColor, NSForegroundColorAttributeName, nil]];
     
     // Set the background color to greenish for all navigation bar
     [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed: (float) 0x7E / 255.0
@@ -26,19 +26,20 @@
                                                                   alpha: 1.0]];
     
     // Set the foreground color to white for all navigation bar
-    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
-    
+    [[UINavigationBar appearance] setTintColor:UIColor.whiteColor];
     [[UINavigationBar appearance] setBarStyle:UIBarStyleBlack];
     
-    UIViewController *rootController = [[CompanyViewController alloc] initWithNibName:@"CompanyViewController" bundle:nil];
+    // Create the start up ViewController
+    UIViewController *rootController = [[CompanyViewController alloc] init];
 
+    // Embed the start up ViewController into a navigation controller
     self.navigationController = [[UINavigationController alloc] initWithRootViewController:rootController];
 
+    // Create and initialize the window
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    self.window.backgroundColor = UIColor.blackColor;
-//  self.window addSubview:self.navigationController.view];
+    self.window.backgroundColor = UIColor.purpleColor;
     
-    // setup initial view controller
+    // Set the navigation controller as the root controller of the window
     [self.window setRootViewController:self.navigationController];
     
     // Make the window visible and active
@@ -46,15 +47,6 @@
     
     [rootController release];
     return YES;
-    
-    
-    /*
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
-    self.window.backgroundColor = [UIColor whiteColor];
-    [self.window makeKeyAndVisible];
-    return YES;
-     */
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

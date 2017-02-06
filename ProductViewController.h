@@ -8,14 +8,22 @@
 
 
 #import <UIKit/UIKit.h>
-#import "DetailViewController.h"
+#import "DataAccessObject.h"
+#import "EntryViewController.h"
 
 
-@interface ProductViewController : UITableViewController
+@class DetailViewController;
 
+
+@interface ProductViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, EntryViewDelegate, DataAccessProductDelegate>
+
+@property (nonatomic, retain) NSString *companyName;
 @property (nonatomic, retain) NSString *stockSymbol;
+@property (nonatomic, retain) UIImage *logo;
 @property (nonatomic, retain) NSMutableArray *products;
 
-@property (nonatomic, retain) DetailViewController *detailViewController;
+- (NSString *)saveTextEntry1:(NSString *)textEntry1
+               andTextEntry2:(NSString *)textEntry2
+               andTextEntry3:(NSString *)textEntry3;
 
 @end

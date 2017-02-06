@@ -6,7 +6,9 @@
 //  Copyright © 2017 Bobby Lee. All rights reserved.
 //
 
+
 #import "Company.h"
+
 
 @implementation Company
 
@@ -18,12 +20,14 @@
 -(instancetype)initWithName:(NSString *)name
              andStockSymbol:(NSString *)stockSymbol
               andStockPrice:(CGFloat)stockPrice
+                 andLogoURL:(NSString *)logoURL
 {
     if (self = [super init])
     {
         _name = [name copy];
         _stockSymbol = [stockSymbol copy];
         _stockPrice = stockPrice;
+        _logoURL = [logoURL copy];
         _products = [[NSMutableArray alloc] init];
     }
 
@@ -37,7 +41,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////
 -(instancetype)init
 {
-    return [self initWithName:nil andStockSymbol:nil andStockPrice:0.0];
+    return [self initWithName:nil
+               andStockSymbol:nil
+                andStockPrice:0.0
+                   andLogoURL:nil];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -47,10 +54,12 @@
 //////////////////////////////////////////////////////////////////////////////////////////
 - (id)copyWithZone:(NSZone *)zone
 {
-    Company *copy = [[Company allocWithZone:zone]
-                               initWithName:_name
-                             andStockSymbol:_stockSymbol
-                              andStockPrice:_stockPrice];
+    Company *copy = [[Company allocWithZone:zone] initWithName:_name
+                                                andStockSymbol:_stockSymbol
+                                                 andStockPrice:_stockPrice
+                                                    andLogoURL:_logoURL];
+    
+    copy.logoData = [_logoData copy];
     copy->_products = [_products mutableCopy];
     return copy;
 }

@@ -8,11 +8,18 @@
 
 #import <UIKit/UIKit.h>
 #import <WebKit/WebKit.h>
+#import "EntryViewController.h"
+#import "Product.h"
+#import "ProductViewController.h"
 
 
-@interface DetailViewController : UIViewController
+@class ProductViewController;
 
-@property (nonatomic, retain) NSString *productURL;
+
+@interface DetailViewController : UIViewController<EntryViewDelegate>
+
+@property (nonatomic, retain) NSString *companyName;
+@property (nonatomic, retain) Product *product;
 
 @end
 

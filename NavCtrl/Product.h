@@ -14,8 +14,12 @@
 
 @property (nonatomic, retain) NSString *name;
 @property (nonatomic, retain) NSString *url;
+@property (nonatomic, retain) NSString *imageURL;
+@property (nonatomic, retain) NSData *imageData;
 
--(instancetype)initWithName:(NSString *)name andURL:(NSString *)url NS_DESIGNATED_INITIALIZER;
+-(instancetype)initWithName:(NSString *)name
+                     andURL:(NSString *)url
+                andImageURL:(NSString *)imageURL NS_DESIGNATED_INITIALIZER;
 -(instancetype)init;
 
 @end

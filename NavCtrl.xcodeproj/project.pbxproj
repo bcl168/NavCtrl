@@ -20,9 +20,13 @@
 		48A656D818163BF200746D36 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 48A656D618163BF200746D36 /* InfoPlist.strings */; };
 		48A656DA18163BF200746D36 /* NavCtrlTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 48A656D918163BF200746D36 /* NavCtrlTests.m */; };
 		48A656E618163C1B00746D36 /* CompanyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 48A656E418163C1B00746D36 /* CompanyViewController.m */; };
-		48A656E718163C1B00746D36 /* CompanyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 48A656E518163C1B00746D36 /* CompanyViewController.xib */; };
 		48A656EB18163F8700746D36 /* ProductViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 48A656E918163F8700746D36 /* ProductViewController.m */; };
 		48A656EE1816468000746D36 /* Sunflower.gif in Resources */ = {isa = PBXBuildFile; fileRef = 48A656ED1816468000746D36 /* Sunflower.gif */; };
+		608604E51E2E8DA100FA82FE /* emptystate-homeView@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 608604E41E2E8DA100FA82FE /* emptystate-homeView@3x.png */; };
+		609181791E3EDEA900A56340 /* UIImage+Resize.m in Sources */ = {isa = PBXBuildFile; fileRef = 609181781E3EDEA900A56340 /* UIImage+Resize.m */; };
+		60A2E7681E2939A6008F522C /* EntryViewForm.xib in Resources */ = {isa = PBXBuildFile; fileRef = 60A2E7671E2939A6008F522C /* EntryViewForm.xib */; };
+		60A2E76B1E29641A008F522C /* EntryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A2E76A1E29641A008F522C /* EntryViewController.m */; };
+		60A2E76E1E29723D008F522C /* EntryView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A2E76D1E29723D008F522C /* EntryView.m */; };
 		60C0F8EE1E204BE300EEA122 /* CompanyLogos.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60C0F8ED1E204BE300EEA122 /* CompanyLogos.xcassets */; };
 		60F048641E24052A00A1E942 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F048631E24052A00A1E942 /* DetailViewController.m */; };
 		60F048691E2419FE00A1E942 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60F048681E2419FE00A1E942 /* WebKit.framework */; };
@@ -60,11 +64,19 @@
 		48A656D918163BF200746D36 /* NavCtrlTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NavCtrlTests.m; sourceTree = "<group>"; };
 		48A656E318163C1B00746D36 /* CompanyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CompanyViewController.h; path = ../CompanyViewController.h; sourceTree = "<group>"; };
 		48A656E418163C1B00746D36 /* CompanyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CompanyViewController.m; path = ../CompanyViewController.m; sourceTree = "<group>"; };
-		48A656E518163C1B00746D36 /* CompanyViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CompanyViewController.xib; path = ../CompanyViewController.xib; sourceTree = "<group>"; };
 		48A656E818163F8700746D36 /* ProductViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProductViewController.h; path = ../ProductViewController.h; sourceTree = "<group>"; };
 		48A656E918163F8700746D36 /* ProductViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProductViewController.m; path = ../ProductViewController.m; sourceTree = "<group>"; };
 		48A656ED1816468000746D36 /* Sunflower.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Sunflower.gif; sourceTree = "<group>"; };
+		608604E41E2E8DA100FA82FE /* emptystate-homeView@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "emptystate-homeView@3x.png"; sourceTree = "<group>"; };
+		609181781E3EDEA900A56340 /* UIImage+Resize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Resize.m"; sourceTree = "<group>"; };
+		6091817A1E3EDEDD00A56340 /* UIImage+Resize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImage+Resize.h"; sourceTree = "<group>"; };
+		60A2E7671E2939A6008F522C /* EntryViewForm.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EntryViewForm.xib; sourceTree = "<group>"; };
+		60A2E7691E29641A008F522C /* EntryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntryViewController.h; sourceTree = "<group>"; };
+		60A2E76A1E29641A008F522C /* EntryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntryViewController.m; sourceTree = "<group>"; };
+		60A2E76C1E29723D008F522C /* EntryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntryView.h; sourceTree = "<group>"; };
+		60A2E76D1E29723D008F522C /* EntryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntryView.m; sourceTree = "<group>"; };
 		60C0F8ED1E204BE300EEA122 /* CompanyLogos.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = CompanyLogos.xcassets; sourceTree = "<group>"; };
+		60DC67C11E391EB000550362 /* Globals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Globals.h; sourceTree = "<group>"; };
 		60F048621E24052A00A1E942 /* DetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailViewController.h; sourceTree = "<group>"; };
 		60F048631E24052A00A1E942 /* DetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
 		60F048681E2419FE00A1E942 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
@@ -162,20 +174,21 @@
 		48A656BA18163BF200746D36 /* NavCtrl */ = {
 			isa = PBXGroup;
 			children = (
+				608604E41E2E8DA100FA82FE /* emptystate-homeView@3x.png */,
 				483796CB1BCBF7A00062D5AB /* AppDelegate */,
+				60AD1A9F1E4916E60035E093 /* Company */,
 				60C0F8ED1E204BE300EEA122 /* CompanyLogos.xcassets */,
-				48A656E518163C1B00746D36 /* CompanyViewController.xib */,
+				60AD1A9E1E4916920035E093 /* DataAccessObject */,
 				60F048651E24072300A1E942 /* DetailViewController */,
+				608604E91E2EC79B00FA82FE /* EntryView */,
+				60AD1A9D1E4916190035E093 /* EntryViewController */,
 				48A656C618163BF200746D36 /* Images.xcassets */,
 				483796CC1BCBF7C70062D5AB /* ParentViewController */,
+				60AD1AA01E4916F10035E093 /* Product */,
 				483796CD1BCBF7EB0062D5AB /* ProductViewController */,
 				48A656BB18163BF200746D36 /* Supporting Files */,
-				60FA71D61E25630300D5EC96 /* Company.h */,
-				60FA71D71E25630300D5EC96 /* Company.m */,
-				60FA71D91E2563BD00D5EC96 /* Product.h */,
-				60FA71DA1E2563BD00D5EC96 /* Product.m */,
-				60FA71DC1E257A0D00D5EC96 /* DataAccessObject.h */,
-				60FA71DD1E257A0D00D5EC96 /* DataAccessObject.m */,
+				60DC67C11E391EB000550362 /* Globals.h */,
+				60AD1AA11E4917020035E093 /* UIImage+Resize */,
 			);
 			path = NavCtrl;
 			sourceTree = "<group>";
@@ -208,6 +221,61 @@
 				48A656D618163BF200746D36 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		608604E91E2EC79B00FA82FE /* EntryView */ = {
+			isa = PBXGroup;
+			children = (
+				60A2E7671E2939A6008F522C /* EntryViewForm.xib */,
+				60A2E76C1E29723D008F522C /* EntryView.h */,
+				60A2E76D1E29723D008F522C /* EntryView.m */,
+			);
+			name = EntryView;
+			sourceTree = "<group>";
+		};
+		60AD1A9D1E4916190035E093 /* EntryViewController */ = {
+			isa = PBXGroup;
+			children = (
+				60A2E7691E29641A008F522C /* EntryViewController.h */,
+				60A2E76A1E29641A008F522C /* EntryViewController.m */,
+			);
+			name = EntryViewController;
+			sourceTree = "<group>";
+		};
+		60AD1A9E1E4916920035E093 /* DataAccessObject */ = {
+			isa = PBXGroup;
+			children = (
+				60FA71DC1E257A0D00D5EC96 /* DataAccessObject.h */,
+				60FA71DD1E257A0D00D5EC96 /* DataAccessObject.m */,
+			);
+			name = DataAccessObject;
+			sourceTree = "<group>";
+		};
+		60AD1A9F1E4916E60035E093 /* Company */ = {
+			isa = PBXGroup;
+			children = (
+				60FA71D61E25630300D5EC96 /* Company.h */,
+				60FA71D71E25630300D5EC96 /* Company.m */,
+			);
+			name = Company;
+			sourceTree = "<group>";
+		};
+		60AD1AA01E4916F10035E093 /* Product */ = {
+			isa = PBXGroup;
+			children = (
+				60FA71D91E2563BD00D5EC96 /* Product.h */,
+				60FA71DA1E2563BD00D5EC96 /* Product.m */,
+			);
+			name = Product;
+			sourceTree = "<group>";
+		};
+		60AD1AA11E4917020035E093 /* UIImage+Resize */ = {
+			isa = PBXGroup;
+			children = (
+				609181781E3EDEA900A56340 /* UIImage+Resize.m */,
+				6091817A1E3EDEDD00A56340 /* UIImage+Resize.h */,
+			);
+			name = "UIImage+Resize";
 			sourceTree = "<group>";
 		};
 		60F048651E24072300A1E942 /* DetailViewController */ = {
@@ -297,8 +365,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				48A656EE1816468000746D36 /* Sunflower.gif in Resources */,
+				608604E51E2E8DA100FA82FE /* emptystate-homeView@3x.png in Resources */,
 				60C0F8EE1E204BE300EEA122 /* CompanyLogos.xcassets in Resources */,
-				48A656E718163C1B00746D36 /* CompanyViewController.xib in Resources */,
+				60A2E7681E2939A6008F522C /* EntryViewForm.xib in Resources */,
 				48A656BF18163BF200746D36 /* InfoPlist.strings in Resources */,
 				48A656C718163BF200746D36 /* Images.xcassets in Resources */,
 			);
@@ -323,8 +392,11 @@
 				48A656E618163C1B00746D36 /* CompanyViewController.m in Sources */,
 				60FA71D81E25630300D5EC96 /* Company.m in Sources */,
 				60FA71DE1E257A0D00D5EC96 /* DataAccessObject.m in Sources */,
+				60A2E76B1E29641A008F522C /* EntryViewController.m in Sources */,
 				60F048641E24052A00A1E942 /* DetailViewController.m in Sources */,
 				48A656C518163BF200746D36 /* NavControllerAppDelegate.m in Sources */,
+				60A2E76E1E29723D008F522C /* EntryView.m in Sources */,
+				609181791E3EDEA900A56340 /* UIImage+Resize.m in Sources */,
 				48A656C118163BF200746D36 /* main.m in Sources */,
 				48A656EB18163F8700746D36 /* ProductViewController.m in Sources */,
 			);
