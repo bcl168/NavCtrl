@@ -7,6 +7,7 @@
 //
 
 
+#import "Globals.h"
 #import "DataAccessObject.h"
 
 
@@ -25,7 +26,7 @@ static NSMutableArray *_companies;
 //  Method implements the singleton pattern for this class.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-+ (DataAccessObject *)sharedInstance
++ (DataAccessObject *) sharedInstance
 {
     static DataAccessObject *_sharedInstance = nil;
     static dispatch_once_t oncePredicate;
@@ -44,24 +45,47 @@ static NSMutableArray *_companies;
 //  Method to add a new company.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (void)addCompanyWithName:(NSString *)name
-            andStockSymbol:(NSString *)stockSymbol
-                andLogoURL:(NSString *)logoURL
+- (void) addCompanyWithName:(NSString *)name
+             andStockSymbol:(NSString *)stockSymbol
+                 andLogoURL:(NSString *)logoURL
 {
-    Company *newCompany = [[Company alloc] initWithName:name
-                                         andStockSymbol:stockSymbol
-                                          andStockPrice:0.0
-                                             andLogoURL:logoURL];
+    // Get the display index for the new company
+    NSInteger index = _companies.count;
     
-    if (logoURL)
+    // If limit exceeded then ...
+    if (index >= MAX_COMPANIES)
+    {
+        // Format an error message
+        NSString *errorMsg = [NSString stringWithFormat:@"Exceeding limit of %d companies.", MAX_COMPANIES];
+        
+        // Notify delegate of error
+        [self.companyDelegate didGetDAOError:errorMsg];
+    }
+    else
+    {
+        // Load the field values into a company record
+        Company *newCompany = [[Company alloc] initWithName:name
+                                             andStockSymbol:stockSymbol
+                                              andStockPrice:nil
+                                                 andLogoURL:logoURL];
+        
+        // Append the company to the "database"
+        [_companies addObject:newCompany];
+
+        // Download the company logo from the internet in the background
         dispatch_async(dispatch_get_global_queue(0,0),
                        ^{
                            NSURL *url = [NSURL URLWithString:logoURL];
                            newCompany.logoData = [[NSData alloc] initWithContentsOfURL:url];
-                           [self.companyDelegate didAddCompany];
+                           
+                           // Notify delegate that the company was added
+                           dispatch_async(dispatch_get_main_queue(),
+                                          ^{
+                                              [self.companyDelegate didInsertCompany:[newCompany copy]
+                                                                    withDisplayIndex:index];
+                                          });
                        });
-    
-    [_companies addObject:newCompany];
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -69,34 +93,38 @@ static NSMutableArray *_companies;
 //  Method to add a new product.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (void)addProductWithName:(NSString *)name
-             andProductURL:(NSString *)productURL
-        andProductImageURL:(NSString *)productImageURL
-                 toCompany:(NSString *)companyName;
+- (void) addProductWithName:(NSString *)name
+              andProductURL:(NSString *)productURL
+         andProductImageURL:(NSString *)productImageURL
+                  toCompany:(NSString *)companyName;
 {
-    // Search for the company record
-    NSInteger index = [self findCompany:companyName];
+    // Get the company record
+    Company *company = [self findCompany:companyName];
     
     // If not found then exit routine.
-    if (-1 == index)
+    if (nil == company)
         return;
     
-    // Get the company record
-    Company *company = _companies[index];
-    
+    // Load the field values into a product record
     Product *newProduct = [[Product alloc] initWithName:name
                                                  andURL:productURL
                                             andImageURL:productImageURL];
 
-    if (productImageURL)
-        dispatch_async(dispatch_get_global_queue(0,0),
-                       ^{
-                           NSURL *url = [NSURL URLWithString:productImageURL];
-                           newProduct.imageData = [[NSData alloc] initWithContentsOfURL:url];
-                           [self.productDelegate didAddProduct:newProduct];
-                       });
-
+    // Append to the company's product list
     [company.products addObject:newProduct];
+
+    // Download the product image from the internet in the background
+    dispatch_async(dispatch_get_global_queue(0,0),
+                   ^{
+                       NSURL *url = [NSURL URLWithString:productImageURL];
+                       newProduct.imageData = [[NSData alloc] initWithContentsOfURL:url];
+                       
+                       // Notify delegate that the product was added
+                       dispatch_async(dispatch_get_main_queue(),
+                                      ^{
+                                          [self.productDelegate didAddProduct:[newProduct copy]];
+                                      });
+                   });
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -104,17 +132,17 @@ static NSMutableArray *_companies;
 //  Method to delete the record of a company using the display index as a key.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (void)deleteCompanyWithDisplayIndex:(NSInteger)index
+- (void) deleteCompanyWithDisplayIndex:(NSInteger)index
 {
     // If index is valid then ...
     if (index < _companies.count)
     {
-        // remove the company record
+        // Delete the company record
         [_companies removeObjectAtIndex:index];
         
+        // Notify delegate that the company was deleted
         [self.companyDelegate didDeleteCompanyWithDisplayIndex:index];
     }
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -122,32 +150,51 @@ static NSMutableArray *_companies;
 //  Method to delete a product from a company's product list.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (void)deleteProduct:(NSString *)productName
-          fromCompany:(NSString *)companyName
+- (void) deleteProduct:(NSString *)productName
+           fromCompany:(NSString *)companyName
 {
-    // Search for the company record
-    NSInteger index = [self findCompany:companyName];
+    // Get the company record
+    Company *company = [self findCompany:companyName];
     
     // If not found then exit routine.
-    if (-1 == index)
+    if (nil == company)
         return;
     
-    // Get the company record
-    Company *company = _companies[index];
-    
-    // Get company product list
-    NSMutableArray *products = company.products;
-
     // Search for the product in the company product list
-    index = [self findProduct:productName
-                           in:products];
+    NSInteger index = [self findProduct:productName
+                                     in:company.products];
     
     // If not found then exit routine
     if (-1 == index)
         return;
     
     // Remove the product from the list
-    [products removeObjectAtIndex:index];
+    [company.products removeObjectAtIndex:index];
+    
+    // Notify delegate that the product was deleted
+    [self.productDelegate didDeleteProduct:productName];
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Method to delete a product from a company's product list.
+//
+//////////////////////////////////////////////////////////////////////////////////////////
+- (void) deleteProductWithDisplayIndex:(NSInteger)index
+                           fromCompany:(NSString *)name
+{
+    // Get the company record
+    Company *company = [self findCompany:name];
+    
+    // If not found then exit routine.
+    if (nil == company)
+        return;
+    
+    // Remove the product from the list
+    [company.products removeObjectAtIndex:index];
+    
+    // Notify delegate that the product was deleted
+    [self.productDelegate didDeleteProductWithDisplayIndex:index];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -155,26 +202,9 @@ static NSMutableArray *_companies;
 //  Method to return the number of company records in the "database".
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (NSInteger)getCompanyCount
+- (NSInteger) getCompanyCount
 {
     return _companies.count;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////
-//
-//  Method to return the record of a company using the display index as the key.
-//
-//////////////////////////////////////////////////////////////////////////////////////////
-- (Company *)getCompanyWithDisplayIndex:(NSInteger)index
-{
-    // If index is valid then ...
-    if (index < _companies.count)
-        // return the company record
-        return [_companies[index] copy];
-    // Otherwise, ...
-    else
-        // return no company
-        return nil;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -182,28 +212,42 @@ static NSMutableArray *_companies;
 //  Method to return the record of a company using the name as a key.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (Company *)getCompanyWithName:(NSString *)name
+- (Company *) getCompanyWithName:(NSString *)name
 {
     // Search for the company record
-    NSInteger index = [self findCompany:name];
+    Company *company = [self findCompany:name];
     
-    // If not found then exit routine.
-    if (-1 == index)
-        return nil;
-    
-    // return the company record
-    return [_companies[index] copy];
+    // If found then return a copy otherwise return nil to indicate company not found.
+    return (company)? [company copy] : nil;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //
-//   Method to insert a company record with a display index.
+//  Method to insert a company record with a display index.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (void)insertCompany:(Company *)company withDisplayIndex:(NSInteger)index
+- (void) insertCompany:(Company *)company
+      withDisplayIndex:(NSInteger)index
 {
-    [_companies insertObject:company atIndex:index];
-    [self.companyDelegate didAddCompany];
+    // Insert the company
+    [_companies insertObject:[company copy] atIndex:index];
+
+    // Notify delegate of the insertion
+    [self.companyDelegate didInsertCompany:company
+                          withDisplayIndex:index];
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Method to return all the companies.
+//
+//////////////////////////////////////////////////////////////////////////////////////////
+- (void) readAll
+{
+    NSMutableArray *copyOfCompanies = [[NSMutableArray alloc] initWithArray:_companies copyItems:YES];
+    
+    // Notify delegate that all companies have been read
+    [self.companyDelegate didReadAll:copyOfCompanies];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -211,8 +255,8 @@ static NSMutableArray *_companies;
 //  Method to change the display order of a company.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (void)updateCompanyDisplayIndexFrom:(NSInteger)currentIndex
-                                   to:(NSInteger)newIndex
+- (void) updateCompanyDisplayIndexFrom:(NSInteger)currentIndex
+                                    to:(NSInteger)newIndex
 {
     // If both indexes are valid then ...
     if (currentIndex < _companies.count && newIndex <= _companies.count)
@@ -225,6 +269,7 @@ static NSMutableArray *_companies;
         // Insert the company record in the new slot
         [_companies insertObject:temp atIndex:newIndex];
         
+        // Notify delegate of the display order change
         [self.companyDelegate didUpdateCompanyDisplayIndexFrom:currentIndex
                                                             to:newIndex];
     }
@@ -235,20 +280,17 @@ static NSMutableArray *_companies;
 //  Method to change the content of the company record.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (void)updateCompanyWithName:(NSString *)currentName
-                           to:(NSString *)newName
-              withStockSymbol:(NSString *)stockSymbol
-                   andLogoURL:(NSString *)logoURL
+- (void) updateCompanyWithName:(NSString *)currentName
+                            to:(NSString *)newName
+               withStockSymbol:(NSString *)stockSymbol
+                    andLogoURL:(NSString *)logoURL
 {
-    // Search for the company record
-    NSInteger index = [self findCompany:currentName];
-    
-    // If not found then exit routine.
-    if (-1 == index)
-        return;
-    
     // Get the company record
-    Company *company = _companies[index];
+    Company *company = [self findCompany:currentName];
+
+    // If not found then exit routine.
+    if (nil == company)
+        return;
     
     // If the name has changed then ...
     if (![company.name isEqualToString:newName])
@@ -266,16 +308,24 @@ static NSMutableArray *_companies;
         // copy the new logo URL into the company record
         company.logoURL = [logoURL copy];
         
-        // download the new logo
+        // download the new logo in the background
         dispatch_async(dispatch_get_global_queue(0,0),
                        ^{
                            NSURL *url = [NSURL URLWithString:logoURL];
                            company.logoData = [[NSData alloc] initWithContentsOfURL:url];
-                           [self.companyDelegate didUpdateCompany:[company copy]];
+                           
+                           // Notify delegate of the company update
+                           dispatch_async(dispatch_get_main_queue(),
+                                          ^{
+                                              [self.companyDelegate didUpdateCompany:[company copy]
+                                                                            withName:currentName];
+                                          });
                        });
     }
     else
-        [self.companyDelegate didUpdateCompany:[company copy]];
+        // Notify delegate of the company update
+        [self.companyDelegate didUpdateCompany:[company copy]
+                                      withName:currentName];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -289,19 +339,17 @@ static NSMutableArray *_companies;
             andProductImageURL:(NSString *)productImageURL
                      inCompany:(NSString *)companyName;
 {
-    Boolean dataChanged;
+    BOOL dataChanged;
 
     // Search for the company record
-    NSInteger index = [self findCompany:companyName];
+    Company *company = [self findCompany:companyName];
     
     // If not found then exit routine.
-    if (-1 == index)
+    if (nil == company)
         return;
     
-    // Get the company record
-    Company *company = _companies[index];
-    
-    index = [self findProduct:currentName in:company.products];
+    NSInteger index = [self findProduct:currentName
+                                     in:company.products];
 
     // If not found then exit routine.
     if (-1 == index)
@@ -330,35 +378,42 @@ static NSMutableArray *_companies;
     // If the image url has changed then ...
     if (![product.imageURL isEqualToString:productImageURL])
     {
-        // copy the new image url into the product record
+        // Copy the new image url into the product record
         product.imageURL = [productImageURL copy];
     
-        // download the new image
+        // Download the product image from the internet in the background
         dispatch_async(dispatch_get_global_queue(0,0),
                        ^{
                            NSURL *url = [NSURL URLWithString:productImageURL];
                            product.imageData = [[NSData alloc] initWithContentsOfURL:url];
-                           [self.productDelegate didUpdateProduct:[product copy]];
+
+                           // Notify delegate of the product update
+                           dispatch_async(dispatch_get_main_queue(),
+                                          ^{
+                                              [self.productDelegate didUpdateProduct:[product copy]
+                                                                            withName:currentName];
+                                          });
                        });
     }
     else if (dataChanged)
-        [self.productDelegate didUpdateProduct:[product copy]];
+        [self.productDelegate didUpdateProduct:[product copy]
+                                      withName:currentName];
 }
 
 #pragma mark - Private Methods
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Method to linearly search the companies array for a company.
+//  Method to linearly search the _companies array for a company.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (NSInteger)findCompany:(NSString *)name
+- (Company *) findCompany:(NSString *)name
 {
     for (NSInteger i = 0; i < _companies.count; ++i)
         if ([((Company *) _companies[i]).name isEqualToString:name])
-            return i;
+            return _companies[i];
     
-    return -1;
+    return nil;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -366,8 +421,8 @@ static NSMutableArray *_companies;
 //  Method to linearly search the products array for a product.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (NSInteger)findProduct:(NSString *)name
-                      in:(NSMutableArray *)products
+- (NSInteger) findProduct:(NSString *)name
+                       in:(NSMutableArray *)products
 {
     for (NSInteger i = 0; i < products.count; ++i)
         if ([((Product *) products[i]).name isEqualToString:name])

@@ -17,16 +17,16 @@
 //  Method that implements the designated initializer.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
--(instancetype)initWithName:(NSString *)name
-             andStockSymbol:(NSString *)stockSymbol
-              andStockPrice:(CGFloat)stockPrice
-                 andLogoURL:(NSString *)logoURL
+- (instancetype) initWithName:(NSString *)name
+               andStockSymbol:(NSString *)stockSymbol
+                andStockPrice:(NSString *)stockPrice
+                   andLogoURL:(NSString *)logoURL
 {
     if (self = [super init])
     {
         _name = [name copy];
         _stockSymbol = [stockSymbol copy];
-        _stockPrice = stockPrice;
+        _stockPrice = [stockPrice copy];
         _logoURL = [logoURL copy];
         _products = [[NSMutableArray alloc] init];
     }
@@ -39,11 +39,11 @@
 //  Method that implements the basic initializer.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
--(instancetype)init
+- (instancetype) init
 {
     return [self initWithName:nil
                andStockSymbol:nil
-                andStockPrice:0.0
+                andStockPrice:nil
                    andLogoURL:nil];
 }
 
@@ -52,7 +52,7 @@
 //  Protocol method to help with deep copying.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (id)copyWithZone:(NSZone *)zone
+- (id) copyWithZone:(NSZone *)zone
 {
     Company *copy = [[Company allocWithZone:zone] initWithName:_name
                                                 andStockSymbol:_stockSymbol

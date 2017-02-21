@@ -1,5 +1,5 @@
 //
-//  DataAccess.h
+//  DataAccessObject.h
 //  NavCtrl
 //
 //  Created by bl on 1/10/17.
@@ -14,9 +14,18 @@
 @protocol DataAccessCompanyDelegate <NSObject>
 
 @required
-- (void) didAddCompany;
 - (void) didDeleteCompanyWithDisplayIndex:(NSInteger)index;
-- (void) didUpdateCompany:(Company *)company;
+
+- (void) didGetDAOError:(NSString *)errorMsg;
+
+- (void) didInsertCompany:(Company *)company
+         withDisplayIndex:(NSInteger)index;
+
+- (void) didReadAll:(NSMutableArray *)companiesFromDAO;
+
+- (void) didUpdateCompany:(Company *)company
+                 withName:(NSString *)oldName;
+
 - (void) didUpdateCompanyDisplayIndexFrom:(NSInteger)currentIndex
                                        to:(NSInteger)newIndex;
 
@@ -26,8 +35,14 @@
 @protocol DataAccessProductDelegate <NSObject>
 
 @required
-- (void)didAddProduct:(Product *)product;
-- (void)didUpdateProduct:(Product *)product;
+- (void) didAddProduct:(Product *)product;
+
+- (void) didDeleteProduct:(NSString *)productName;
+
+- (void) didDeleteProductWithDisplayIndex:(NSInteger)index;
+
+- (void) didUpdateProduct:(Product *)product
+                 withName:(NSString *)oldName;
 
 @end
 
@@ -38,6 +53,8 @@
 @property (nonatomic, strong) id <DataAccessProductDelegate> productDelegate;
 
 + (DataAccessObject *)sharedInstance;
+
+- (void)readAll;
 
 - (void) addCompanyWithName:(NSString *)name
              andStockSymbol:(NSString *)stockSymbol
@@ -53,9 +70,10 @@
 - (void) deleteProduct:(NSString *)productName
            fromCompany:(NSString *)companyName;
 
-- (NSInteger) getCompanyCount;
+- (void) deleteProductWithDisplayIndex:(NSInteger)index
+                           fromCompany:(NSString *)name;
 
-- (Company *) getCompanyWithDisplayIndex:(NSInteger)index;
+- (NSInteger) getCompanyCount;
 
 - (Company *) getCompanyWithName:(NSString *)name;
 

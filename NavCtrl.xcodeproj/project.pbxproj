@@ -22,11 +22,18 @@
 		48A656E618163C1B00746D36 /* CompanyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 48A656E418163C1B00746D36 /* CompanyViewController.m */; };
 		48A656EB18163F8700746D36 /* ProductViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 48A656E918163F8700746D36 /* ProductViewController.m */; };
 		48A656EE1816468000746D36 /* Sunflower.gif in Resources */ = {isa = PBXBuildFile; fileRef = 48A656ED1816468000746D36 /* Sunflower.gif */; };
+		6019D7B41E523B6500CEE3DC /* CompanyListTableViewInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 6019D7B31E523B6500CEE3DC /* CompanyListTableViewInterface.m */; };
+		6019D7B71E52499C00CEE3DC /* CompanyListEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = 6019D7B61E52499C00CEE3DC /* CompanyListEditor.m */; };
+		60242AB21E57873B00B0687F /* ProductListEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = 60242AB11E57873B00B0687F /* ProductListEditor.m */; };
 		608604E51E2E8DA100FA82FE /* emptystate-homeView@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 608604E41E2E8DA100FA82FE /* emptystate-homeView@3x.png */; };
+		60863D011E57551C00487F33 /* ProductListManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 60863D001E57551C00487F33 /* ProductListManager.m */; };
+		60863D041E5757FB00487F33 /* ProductListTableViewInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 60863D031E5757FB00487F33 /* ProductListTableViewInterface.m */; };
 		609181791E3EDEA900A56340 /* UIImage+Resize.m in Sources */ = {isa = PBXBuildFile; fileRef = 609181781E3EDEA900A56340 /* UIImage+Resize.m */; };
+		609CF0BF1E4A30C00031B983 /* CompanyListManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 609CF0BE1E4A30C00031B983 /* CompanyListManager.m */; };
 		60A2E7681E2939A6008F522C /* EntryViewForm.xib in Resources */ = {isa = PBXBuildFile; fileRef = 60A2E7671E2939A6008F522C /* EntryViewForm.xib */; };
 		60A2E76B1E29641A008F522C /* EntryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A2E76A1E29641A008F522C /* EntryViewController.m */; };
 		60A2E76E1E29723D008F522C /* EntryView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A2E76D1E29723D008F522C /* EntryView.m */; };
+		60AD1ABA1E492F170035E093 /* StockDataFeed.m in Sources */ = {isa = PBXBuildFile; fileRef = 60AD1AB91E492F170035E093 /* StockDataFeed.m */; };
 		60C0F8EE1E204BE300EEA122 /* CompanyLogos.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60C0F8ED1E204BE300EEA122 /* CompanyLogos.xcassets */; };
 		60F048641E24052A00A1E942 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60F048631E24052A00A1E942 /* DetailViewController.m */; };
 		60F048691E2419FE00A1E942 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60F048681E2419FE00A1E942 /* WebKit.framework */; };
@@ -67,14 +74,28 @@
 		48A656E818163F8700746D36 /* ProductViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProductViewController.h; path = ../ProductViewController.h; sourceTree = "<group>"; };
 		48A656E918163F8700746D36 /* ProductViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProductViewController.m; path = ../ProductViewController.m; sourceTree = "<group>"; };
 		48A656ED1816468000746D36 /* Sunflower.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Sunflower.gif; sourceTree = "<group>"; };
+		6019D7B21E523B6500CEE3DC /* CompanyListTableViewInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompanyListTableViewInterface.h; sourceTree = "<group>"; };
+		6019D7B31E523B6500CEE3DC /* CompanyListTableViewInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CompanyListTableViewInterface.m; sourceTree = "<group>"; };
+		6019D7B51E52499C00CEE3DC /* CompanyListEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompanyListEditor.h; sourceTree = "<group>"; };
+		6019D7B61E52499C00CEE3DC /* CompanyListEditor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CompanyListEditor.m; sourceTree = "<group>"; };
+		60242AB01E57873B00B0687F /* ProductListEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductListEditor.h; sourceTree = "<group>"; };
+		60242AB11E57873B00B0687F /* ProductListEditor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductListEditor.m; sourceTree = "<group>"; };
 		608604E41E2E8DA100FA82FE /* emptystate-homeView@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "emptystate-homeView@3x.png"; sourceTree = "<group>"; };
+		60863CFF1E57551C00487F33 /* ProductListManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductListManager.h; sourceTree = "<group>"; };
+		60863D001E57551C00487F33 /* ProductListManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductListManager.m; sourceTree = "<group>"; };
+		60863D021E5757FB00487F33 /* ProductListTableViewInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductListTableViewInterface.h; sourceTree = "<group>"; };
+		60863D031E5757FB00487F33 /* ProductListTableViewInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductListTableViewInterface.m; sourceTree = "<group>"; };
 		609181781E3EDEA900A56340 /* UIImage+Resize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Resize.m"; sourceTree = "<group>"; };
 		6091817A1E3EDEDD00A56340 /* UIImage+Resize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImage+Resize.h"; sourceTree = "<group>"; };
+		609CF0BD1E4A30C00031B983 /* CompanyListManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompanyListManager.h; sourceTree = "<group>"; };
+		609CF0BE1E4A30C00031B983 /* CompanyListManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CompanyListManager.m; sourceTree = "<group>"; };
 		60A2E7671E2939A6008F522C /* EntryViewForm.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EntryViewForm.xib; sourceTree = "<group>"; };
 		60A2E7691E29641A008F522C /* EntryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntryViewController.h; sourceTree = "<group>"; };
 		60A2E76A1E29641A008F522C /* EntryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntryViewController.m; sourceTree = "<group>"; };
 		60A2E76C1E29723D008F522C /* EntryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntryView.h; sourceTree = "<group>"; };
 		60A2E76D1E29723D008F522C /* EntryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntryView.m; sourceTree = "<group>"; };
+		60AD1AB81E492F170035E093 /* StockDataFeed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StockDataFeed.h; sourceTree = "<group>"; };
+		60AD1AB91E492F170035E093 /* StockDataFeed.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StockDataFeed.m; sourceTree = "<group>"; };
 		60C0F8ED1E204BE300EEA122 /* CompanyLogos.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = CompanyLogos.xcassets; sourceTree = "<group>"; };
 		60DC67C11E391EB000550362 /* Globals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Globals.h; sourceTree = "<group>"; };
 		60F048621E24052A00A1E942 /* DetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailViewController.h; sourceTree = "<group>"; };
@@ -174,21 +195,29 @@
 		48A656BA18163BF200746D36 /* NavCtrl */ = {
 			isa = PBXGroup;
 			children = (
-				608604E41E2E8DA100FA82FE /* emptystate-homeView@3x.png */,
 				483796CB1BCBF7A00062D5AB /* AppDelegate */,
 				60AD1A9F1E4916E60035E093 /* Company */,
+				609076A71E55FA67000DE11B /* CompanyList */,
 				60C0F8ED1E204BE300EEA122 /* CompanyLogos.xcassets */,
 				60AD1A9E1E4916920035E093 /* DataAccessObject */,
 				60F048651E24072300A1E942 /* DetailViewController */,
+				608604E41E2E8DA100FA82FE /* emptystate-homeView@3x.png */,
 				608604E91E2EC79B00FA82FE /* EntryView */,
 				60AD1A9D1E4916190035E093 /* EntryViewController */,
+				60DC67C11E391EB000550362 /* Globals.h */,
 				48A656C618163BF200746D36 /* Images.xcassets */,
 				483796CC1BCBF7C70062D5AB /* ParentViewController */,
 				60AD1AA01E4916F10035E093 /* Product */,
 				483796CD1BCBF7EB0062D5AB /* ProductViewController */,
+				608F41491E550747002EAB8C /* StockDataFeed */,
 				48A656BB18163BF200746D36 /* Supporting Files */,
-				60DC67C11E391EB000550362 /* Globals.h */,
 				60AD1AA11E4917020035E093 /* UIImage+Resize */,
+				60863CFF1E57551C00487F33 /* ProductListManager.h */,
+				60863D001E57551C00487F33 /* ProductListManager.m */,
+				60863D021E5757FB00487F33 /* ProductListTableViewInterface.h */,
+				60863D031E5757FB00487F33 /* ProductListTableViewInterface.m */,
+				60242AB01E57873B00B0687F /* ProductListEditor.h */,
+				60242AB11E57873B00B0687F /* ProductListEditor.m */,
 			);
 			path = NavCtrl;
 			sourceTree = "<group>";
@@ -231,6 +260,28 @@
 				60A2E76D1E29723D008F522C /* EntryView.m */,
 			);
 			name = EntryView;
+			sourceTree = "<group>";
+		};
+		608F41491E550747002EAB8C /* StockDataFeed */ = {
+			isa = PBXGroup;
+			children = (
+				60AD1AB81E492F170035E093 /* StockDataFeed.h */,
+				60AD1AB91E492F170035E093 /* StockDataFeed.m */,
+			);
+			name = StockDataFeed;
+			sourceTree = "<group>";
+		};
+		609076A71E55FA67000DE11B /* CompanyList */ = {
+			isa = PBXGroup;
+			children = (
+				609CF0BD1E4A30C00031B983 /* CompanyListManager.h */,
+				609CF0BE1E4A30C00031B983 /* CompanyListManager.m */,
+				6019D7B21E523B6500CEE3DC /* CompanyListTableViewInterface.h */,
+				6019D7B31E523B6500CEE3DC /* CompanyListTableViewInterface.m */,
+				6019D7B51E52499C00CEE3DC /* CompanyListEditor.h */,
+				6019D7B61E52499C00CEE3DC /* CompanyListEditor.m */,
+			);
+			name = CompanyList;
 			sourceTree = "<group>";
 		};
 		60AD1A9D1E4916190035E093 /* EntryViewController */ = {
@@ -393,12 +444,19 @@
 				60FA71D81E25630300D5EC96 /* Company.m in Sources */,
 				60FA71DE1E257A0D00D5EC96 /* DataAccessObject.m in Sources */,
 				60A2E76B1E29641A008F522C /* EntryViewController.m in Sources */,
+				6019D7B71E52499C00CEE3DC /* CompanyListEditor.m in Sources */,
 				60F048641E24052A00A1E942 /* DetailViewController.m in Sources */,
+				60863D011E57551C00487F33 /* ProductListManager.m in Sources */,
+				60AD1ABA1E492F170035E093 /* StockDataFeed.m in Sources */,
 				48A656C518163BF200746D36 /* NavControllerAppDelegate.m in Sources */,
 				60A2E76E1E29723D008F522C /* EntryView.m in Sources */,
+				609CF0BF1E4A30C00031B983 /* CompanyListManager.m in Sources */,
 				609181791E3EDEA900A56340 /* UIImage+Resize.m in Sources */,
 				48A656C118163BF200746D36 /* main.m in Sources */,
 				48A656EB18163F8700746D36 /* ProductViewController.m in Sources */,
+				6019D7B41E523B6500CEE3DC /* CompanyListTableViewInterface.m in Sources */,
+				60242AB21E57873B00B0687F /* ProductListEditor.m in Sources */,
+				60863D041E5757FB00487F33 /* ProductListTableViewInterface.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

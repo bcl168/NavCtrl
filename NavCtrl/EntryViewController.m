@@ -9,20 +9,14 @@
 
 #import "Globals.h"
 #import "EntryViewController.h"
-#import "DataAccessObject.h"
 
-
-@interface EntryViewController ()
-
-
-@end
 
 @implementation EntryViewController
 {
     EntryView *_entryView;
-    NSString *_title;
     EntryViewNavigationButtonType _leftButtonType;
     EntryViewNavigationButtonType _rightButtonType;
+    NSString *_title;
 }
 
 @synthesize delegate;
@@ -34,7 +28,7 @@
 //  Method to configure the navigation bar.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (void)setNavigationBarAttributes:(NSString *)title
+- (void) setNavigationBarAttributes:(NSString *)title
           leftNavigationButtonType:(EntryViewNavigationButtonType)leftButtontype
          rightNavigationButtonType:(EntryViewNavigationButtonType)rightButtonType
 {
@@ -45,18 +39,12 @@
 
 #pragma mark - Overridden Methods
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 //////////////////////////////////////////////////////////////////////////////////////////
 //
 //  Overridden method to initialize this controller.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (void)viewDidLoad
+- (void) viewDidLoad
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -77,9 +65,9 @@
     _entryView = [[EntryView alloc] initWithFrame:self.view.bounds];
     [self.view addSubview:_entryView];
     
-    self->_entryView.textEntry1.delegate = self;
-    self->_entryView.textEntry2.delegate = self;
-    self->_entryView.textEntry3.delegate = self;
+    _entryView.textEntry1.delegate = self;
+    _entryView.textEntry2.delegate = self;
+    _entryView.textEntry3.delegate = self;
 
     // Get the top most and the bottom most control on the entry form
     CGRect buttonFrame = _entryView.deleteButton.frame;
@@ -100,9 +88,9 @@
         _entryView.deleteButton.hidden = NO;
         
         // Transfer data to textfields
-        _entryView.textEntry1.text = self.textEntry1;
-        _entryView.textEntry2.text = self.textEntry2;
-        _entryView.textEntry3.text = self.textEntry3;
+        _entryView.textEntry1.text = [self.textEntry1 copy];
+        _entryView.textEntry2.text = [self.textEntry2 copy];
+        _entryView.textEntry3.text = [self.textEntry3 copy];
     }
 
     // Register for keyboard notification
@@ -123,7 +111,7 @@
 //  Method for creating navigation buttons.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (UIBarButtonItem *)createNavigationButton:(EntryViewNavigationButtonType)buttonType
+- (UIBarButtonItem *) createNavigationButton:(EntryViewNavigationButtonType)buttonType
 {
     switch (buttonType)
     {
@@ -169,7 +157,7 @@
 //  exit this screen.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (void)exitController:(id)sender
+- (void) exitController:(id)sender
 {
     // Unregister for keyboard notification
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -183,7 +171,7 @@
 //  Method called when the UIKeyboardDidShowNotification is sent.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (void)keyboardWasShown:(NSNotification*)notification
+- (void) keyboardWasShown:(NSNotification*)notification
 {
     // Get keyboard height
     NSDictionary* info = [notification userInfo];
@@ -212,7 +200,7 @@
 //  Method called when the UIKeyboardWillHideNotification is sent.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (void)keyboardWillBeHidden:(NSNotification*)aNotification
+- (void) keyboardWillBeHidden:(NSNotification*)aNotification
 {
     // Reset the padding on the bottom of the content
     _entryView.scrollView.contentInset = UIEdgeInsetsZero;
@@ -226,11 +214,21 @@
 //  Method called when the user touch the save button.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (void)saveButtonTouched:(id)sender
+- (void) saveButtonTouched:(id)sender
 {
-    NSString *errorMsg = [self.delegate saveTextEntry1:_entryView.textEntry1.text
-                                         andTextEntry2:_entryView.textEntry2.text
-                                         andTextEntry3:_entryView.textEntry3.text];
+    NSString *errorMsg;
+
+    if (self.textEntry1.length)
+        errorMsg = [self.delegate saveChangedTextEntry1:_entryView.textEntry1.text
+                                         fromTextEntry1:self.textEntry1
+                                   andChangedTextEntry2:_entryView.textEntry2.text
+                                         fromTextEntry2:self.textEntry2
+                                   andChangedTextEntry3:_entryView.textEntry3.text
+                                         fromTextEntry3:self.textEntry3];
+    else
+            errorMsg = [self.delegate saveNewTextEntry1:_entryView.textEntry1.text
+                                       andNewTextEntry2:_entryView.textEntry2.text
+                                       andNewTextEntry3:_entryView.textEntry3.text];
 
     // If there is an error message then ...
     if (errorMsg)
@@ -260,7 +258,7 @@
 //  Method called when user touches the return key on the keyboard.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
+- (BOOL) textFieldShouldReturn:(UITextField *)textField
 {
     [textField resignFirstResponder];
     return NO;

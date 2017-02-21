@@ -27,9 +27,16 @@ EntryViewNavigationButtonType;
 @protocol EntryViewDelegate <NSObject>
 
 @required
-- (NSString *)saveTextEntry1:(NSString *)textEntry1
-               andTextEntry2:(NSString *)textEntry2
-               andTextEntry3:(NSString *)textEntry3;
+- (NSString *) saveChangedTextEntry1:(NSString *)newTextEntry1
+                      fromTextEntry1:(NSString *)originalTextEntry1
+                andChangedTextEntry2:(NSString *)newTextEntry2
+                      fromTextEntry2:(NSString *)originalTextEntry2
+                andChangedTextEntry3:(NSString *)newTextEntry3
+                      fromTextEntry3:(NSString *)originalTextEntry3;
+
+- (NSString *) saveNewTextEntry1:(NSString *)textEntry1
+                andNewTextEntry2:(NSString *)textEntry2
+                andNewTextEntry3:(NSString *)textEntry3;
 
 @end
 
@@ -46,6 +53,5 @@ EntryViewNavigationButtonType;
 - (void)setNavigationBarAttributes:(NSString *)title
           leftNavigationButtonType:(EntryViewNavigationButtonType)leftButtontype
          rightNavigationButtonType:(EntryViewNavigationButtonType)rightButtonType;
-
 
 @end

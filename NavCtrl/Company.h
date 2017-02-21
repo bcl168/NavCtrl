@@ -9,21 +9,26 @@
 
 #import <Foundation/Foundation.h>
 #import "Product.h"
+#import "StockDataFeed.h"
+
+
+// Redefine MAX_QUOTE for readability
+#define MAX_COMPANIES   MAX_QUOTE
 
 
 @interface Company : NSObject<NSCopying>
 
 @property (nonatomic, retain) NSString *name;
 @property (nonatomic, retain) NSString *stockSymbol;
-@property (nonatomic) CGFloat stockPrice;
+@property (nonatomic, retain) NSString *stockPrice;
 @property (nonatomic, retain) NSString *logoURL;
 @property (nonatomic, retain) NSData *logoData;
 @property (nonatomic, retain) NSMutableArray *products;
 
--(instancetype)init;
--(instancetype)initWithName:(NSString *)name
-             andStockSymbol:(NSString *)stockSymbol
-              andStockPrice:(CGFloat)stockPrice
-                 andLogoURL:(NSString *)logoURL NS_DESIGNATED_INITIALIZER;
+- (instancetype) init;
+- (instancetype) initWithName:(NSString *)name
+              andStockSymbol:(NSString *)stockSymbol
+               andStockPrice:(NSString *)stockPrice
+                  andLogoURL:(NSString *)logoURL NS_DESIGNATED_INITIALIZER;
 
 @end

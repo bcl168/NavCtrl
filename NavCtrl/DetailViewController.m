@@ -3,18 +3,13 @@
 //  NavCtrl
 //
 //  Created by bl on 1/9/17.
-//  Copyright © 2017 Aditya Narayan. All rights reserved.
+//  Copyright © 2017 bl. All rights reserved.
 //
 
 
 #import "Globals.h"
-#import "DataAccessObject.h"
 #import "DetailViewController.h"
 
-
-@interface DetailViewController ()
-
-@end
 
 @implementation DetailViewController
 {
@@ -57,37 +52,24 @@
     [_webView loadRequest:[NSURLRequest requestWithURL:url]];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
 //////////////////////////////////////////////////////////////////////////////////////////
 //
 //  Delegate method called by EntryViewController when the user wants to do a save.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (NSString *)saveTextEntry1:(NSString *)textEntry1
-               andTextEntry2:(NSString *)textEntry2
-               andTextEntry3:(NSString *)textEntry3
+- (NSString *) saveChangedTextEntry1:(NSString *)newTextEntry1
+                      fromTextEntry1:(NSString *)originalTextEntry1
+                andChangedTextEntry2:(NSString *)newTextEntry2
+                      fromTextEntry2:(NSString *)originalTextEntry2
+                andChangedTextEntry3:(NSString *)newTextEntry3
+                      fromTextEntry3:(NSString *)originalTextEntry3;
 {
     // Trim leading and trailing spaces from all inputs
     NSCharacterSet *allWhitespaceCharacters = [NSCharacterSet whitespaceCharacterSet];
-    NSString *productName = [textEntry1 stringByTrimmingCharactersInSet:allWhitespaceCharacters];
-    NSString *productURL = [textEntry2 stringByTrimmingCharactersInSet:allWhitespaceCharacters];
-    NSString *productImageURL = [textEntry3 stringByTrimmingCharactersInSet:allWhitespaceCharacters];
-    Boolean productURLChanged;
+    NSString *productName = [newTextEntry1 stringByTrimmingCharactersInSet:allWhitespaceCharacters];
+    NSString *productURL = [newTextEntry2 stringByTrimmingCharactersInSet:allWhitespaceCharacters];
+    NSString *productImageURL = [newTextEntry3 stringByTrimmingCharactersInSet:allWhitespaceCharacters];
+    BOOL productURLChanged;
     
     // Check inputs for entry
     if (0 == productName.length)
@@ -97,11 +79,11 @@
     else if (0 == productImageURL.length)
         return @"Product image URL missing.";
 
-    productURLChanged = ![self.product.url isEqualToString:productURL];
+    productURLChanged = ![originalTextEntry2 isEqualToString:productURL];
 
     // If one of the input has changed then ...
-    if (![self.product.name isEqualToString:productName] ||
-        ![self.product.imageURL isEqualToString:productImageURL] ||
+    if (![originalTextEntry1 isEqualToString:productName] ||
+        ![originalTextEntry3 isEqualToString:productImageURL] ||
         productURLChanged)
     {
         DataAccessObject *dao = [DataAccessObject sharedInstance];
@@ -111,7 +93,7 @@
                                 to:productName
                      andProductURL:productURL
                 andProductImageURL:productImageURL
-                         inCompany:self.companyName];
+                         inCompany:self.productListMgr.companyName];
         
         // If url changed then ...
         if (productURLChanged)
@@ -132,12 +114,12 @@
 //////////////////////////////////////////////////////////////////////////////////////////
 - (void) gotoEditScreen
 {
-    // Create and initialize entrhy screen
+    // Create and initialize entry screen
     EntryViewController *entryViewController = [[EntryViewController alloc] init];
     [entryViewController setNavigationBarAttributes:@"Edit Product"
                            leftNavigationButtonType:EntryViewNavigationCancelButton
                           rightNavigationButtonType:EntryViewNavigationSaveButton];
-    entryViewController.delegate = self;
+    entryViewController.delegate = self.productListMgr.editor;
     entryViewController.destinationControllerForDelete = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count - 2];
     entryViewController.deleteNotificationName = DELETE_PRODUCT_NOTIFICATION;
     
@@ -159,6 +141,5 @@
 {
     [self.navigationController popViewControllerAnimated:NO];
 }
-
 
 @end

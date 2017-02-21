@@ -13,4 +13,6 @@
 
 #define BACK_BUTTON_FONT_SIZE       30
 
+#define TABLE_ROW_HEIGHT    76.0
+
 #endif /* Globals_h */
