@@ -119,6 +119,9 @@
     [entryViewController setNavigationBarAttributes:@"Edit Product"
                            leftNavigationButtonType:EntryViewNavigationCancelButton
                           rightNavigationButtonType:EntryViewNavigationSaveButton];
+    [entryViewController setTextFieldLabel1:@"Product Name:"
+                         andTextFieldLabel2:@"Product URL:"
+                         andTextFieldLabel3:@"Image URL:"];
     entryViewController.delegate = self.productListMgr.editor;
     entryViewController.destinationControllerForDelete = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count - 2];
     entryViewController.deleteNotificationName = DELETE_PRODUCT_NOTIFICATION;

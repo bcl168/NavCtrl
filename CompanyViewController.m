@@ -197,6 +197,9 @@
         [entryViewController setNavigationBarAttributes:@"Edit Company"
                                leftNavigationButtonType:EntryViewNavigationCancelButton
                               rightNavigationButtonType:EntryViewNavigationSaveButton];
+        [entryViewController setTextFieldLabel1:@"Company Name:"
+                             andTextFieldLabel2:@"Stock Symbol:"
+                             andTextFieldLabel3:@"Logo URL:"];
         entryViewController.delegate = _companyListMgr.editor;
         entryViewController.deleteNotificationName = DELETE_COMPANY_NOTIFICATION;
 
@@ -285,6 +288,9 @@
     [entryViewController setNavigationBarAttributes:@"New Company"
                            leftNavigationButtonType:EntryViewNavigationCancelButton
                           rightNavigationButtonType:EntryViewNavigationSaveButton];
+    [entryViewController setTextFieldLabel1:@"Company Name:"
+                         andTextFieldLabel2:@"Stock Symbol:"
+                         andTextFieldLabel3:@"Logo URL:"];
     entryViewController.delegate = _companyListMgr.editor;
     
     // Display the screen
@@ -391,12 +397,14 @@
 //////////////////////////////////////////////////////////////////////////////////////////
 - (void) toggleEditingMode
 {
-    // Toggle editing state
-    [_tableView setEditing:!_tableView.editing animated:YES];
-    
     // If in editing mode then ...
-    if (_tableView.editing)
+    if ([self.navigationItem.leftBarButtonItem.title isEqualToString:@"Edit"])
     {
+        if (0 == _companyListMgr.count)
+            return;
+
+        [_tableView setEditing:YES animated:YES];
+        
         // change button to display 'Done'
         self.navigationItem.leftBarButtonItem.title = @"Done";
         
@@ -431,6 +439,8 @@
     // Otherwise, ...
     else
     {
+        [_tableView setEditing:NO animated:YES];
+
         _currentSelectedRow = -1;
 
         // Clear undo stack
@@ -441,6 +451,7 @@
         
         // hide the toolbar on the bottom of the screen
         [self.navigationController setToolbarHidden:YES];
+        NSLog(@"navigationBarHidden: %d", self.navigationController.navigationBarHidden);
     }
 }
 

@@ -19,14 +19,13 @@
 //////////////////////////////////////////////////////////////////////////////////////////
 - (instancetype) initWithName:(NSString *)name
                andStockSymbol:(NSString *)stockSymbol
-                andStockPrice:(NSString *)stockPrice
                    andLogoURL:(NSString *)logoURL
 {
     if (self = [super init])
     {
         _name = [name copy];
         _stockSymbol = [stockSymbol copy];
-        _stockPrice = [stockPrice copy];
+        _stockPrice = nil;
         _logoURL = [logoURL copy];
         _products = [[NSMutableArray alloc] init];
     }
@@ -43,7 +42,6 @@
 {
     return [self initWithName:nil
                andStockSymbol:nil
-                andStockPrice:nil
                    andLogoURL:nil];
 }
 
@@ -56,9 +54,10 @@
 {
     Company *copy = [[Company allocWithZone:zone] initWithName:_name
                                                 andStockSymbol:_stockSymbol
-                                                 andStockPrice:_stockPrice
                                                     andLogoURL:_logoURL];
     
+    if (_stockPrice)
+        copy.stockPrice = [_stockPrice copy];
     copy.logoData = [_logoData copy];
     copy->_products = [_products mutableCopy];
     return copy;

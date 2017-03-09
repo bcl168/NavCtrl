@@ -248,6 +248,9 @@
     [entryViewController setNavigationBarAttributes:@"Add Product"
                            leftNavigationButtonType:EntryViewNavigationBackButton
                           rightNavigationButtonType:EntryViewNavigationSaveButton];
+    [entryViewController setTextFieldLabel1:@"Product Name:"
+                         andTextFieldLabel2:@"Product URL:"
+                         andTextFieldLabel3:@"Image URL:"];
     entryViewController.delegate = _productListMgr.editor;
     
     [self.navigationController pushViewController:entryViewController animated:YES];

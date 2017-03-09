@@ -75,7 +75,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////
 - (Company *) getCompanyWithDisplayIndex:(NSInteger)index
 {
-    return [_companies[index] copy];
+    return _companies[index];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -249,12 +249,13 @@
         [_stockDataFeed registerStockSymbol:company.stockSymbol];
     }
 
-    // Delete the company record in the current slot
-    [_companies removeObjectAtIndex:index];
+    // Transfer the new values over
+    Company *current = _companies[index];
+    current.name = company.name;
+    current.stockSymbol = company.stockSymbol;
+    current.logoURL = company.logoURL;
+    current.logoData = company.logoData;
     
-    // Replace with the new company record in the same slot
-    [_companies insertObject:company atIndex:index];
-
     // Propagate the notification to the next delegate
     [self.delegate didUpdateCompany];
 }

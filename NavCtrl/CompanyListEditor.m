@@ -169,7 +169,6 @@
     {
         Company *newCompany = [[Company alloc] initWithName:companyName
                                              andStockSymbol:stockSymbol
-                                              andStockPrice:@""
                                                  andLogoURL:logoURL];
         
         [self updateCompanyFrom:[_companyListMgr getCompany:originalTextEntry1]

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0810"
+   LastUpgradeVersion = "0820"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -35,6 +35,16 @@
                BlueprintIdentifier = "48A656CB18163BF200746D36"
                BuildableName = "NavCtrlTests.xctest"
                BlueprintName = "NavCtrlTests"
+               ReferencedContainer = "container:NavCtrl.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "609244AA1E6F795000B1F4DA"
+               BuildableName = "NavCtrlUITests.xctest"
+               BlueprintName = "NavCtrlUITests"
                ReferencedContainer = "container:NavCtrl.xcodeproj">
             </BuildableReference>
          </TestableReference>

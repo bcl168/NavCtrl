@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="11759" systemVersion="16C67" minimumToolsVersion="Automatic" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
+    <entity name="CDCompany" representedClassName="CDCompany" syncable="YES" codeGenerationType="class">
+        <attribute name="displayIndex" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="logoData" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="logoURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="stockSymbol" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="companyToProducts" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDProduct" syncable="YES"/>
+    </entity>
+    <entity name="CDProduct" representedClassName="CDProduct" syncable="YES" codeGenerationType="class">
+        <attribute name="displayIndex" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="imageURL" attributeType="String" syncable="YES"/>
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <attribute name="url" attributeType="String" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="CDCompany" positionX="-243" positionY="20" width="126" height="135"/>
+        <element name="CDProduct" positionX="-54" positionY="18" width="128" height="105"/>
+    </elements>
+</model>

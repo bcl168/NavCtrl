@@ -28,7 +28,6 @@
 - (instancetype) init;
 - (instancetype) initWithName:(NSString *)name
               andStockSymbol:(NSString *)stockSymbol
-               andStockPrice:(NSString *)stockPrice
                   andLogoURL:(NSString *)logoURL NS_DESIGNATED_INITIALIZER;
 
 @end

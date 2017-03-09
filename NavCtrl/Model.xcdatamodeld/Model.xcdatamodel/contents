@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="11759" systemVersion="16D32" minimumToolsVersion="Automatic" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
+    <entity name="CDCompany" representedClassName="CDCompany" syncable="YES" codeGenerationType="class">
+        <attribute name="displayIndex" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="logoData" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="logoURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="stockSymbol" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="companyToProducts" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDProduct" inverseName="productToCompany" inverseEntity="CDProduct" syncable="YES"/>
+    </entity>
+    <entity name="CDProduct" representedClassName="CDProduct" syncable="YES" codeGenerationType="class">
+        <attribute name="displayIndex" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="imageData" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="imageURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="url" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="productToCompany" maxCount="1" deletionRule="Nullify" destinationEntity="CDCompany" inverseName="companyToProducts" inverseEntity="CDCompany" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="CDCompany" positionX="3402" positionY="-3627" width="126" height="133"/>
+        <element name="CDProduct" positionX="3672" positionY="-3618" width="128" height="133"/>
+    </elements>
+</model>

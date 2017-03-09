@@ -8,7 +8,6 @@
 
 
 #import <UIKit/UIKit.h>
-#import "EntryView.h"
 
 
 typedef enum
@@ -26,7 +25,7 @@ EntryViewNavigationButtonType;
 
 @protocol EntryViewDelegate <NSObject>
 
-@required
+@optional
 - (NSString *) saveChangedTextEntry1:(NSString *)newTextEntry1
                       fromTextEntry1:(NSString *)originalTextEntry1
                 andChangedTextEntry2:(NSString *)newTextEntry2
@@ -40,7 +39,6 @@ EntryViewNavigationButtonType;
 
 @end
 
-
 @interface EntryViewController : UIViewController<UITextFieldDelegate>
 
 @property (nonatomic, strong) id<EntryViewDelegate> delegate;
@@ -50,8 +48,12 @@ EntryViewNavigationButtonType;
 @property (nonatomic, retain) NSString *textEntry2;
 @property (nonatomic, retain) NSString *textEntry3;
 
-- (void)setNavigationBarAttributes:(NSString *)title
-          leftNavigationButtonType:(EntryViewNavigationButtonType)leftButtontype
-         rightNavigationButtonType:(EntryViewNavigationButtonType)rightButtonType;
+- (void) setNavigationBarAttributes:(NSString *)title
+           leftNavigationButtonType:(EntryViewNavigationButtonType)leftButtontype
+          rightNavigationButtonType:(EntryViewNavigationButtonType)rightButtonType;
+
+- (void) setTextFieldLabel1:(NSString *)label1
+         andTextFieldLabel2:(NSString *)label2
+         andTextFieldLabel3:(NSString *)label3;
 
 @end

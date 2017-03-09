@@ -7,11 +7,17 @@
 //
 
 
+#import <CoreData/CoreData.h>
 #import "Globals.h"
 #import "DataAccessObject.h"
+#import "NavControllerAppDelegate.h"
+#import "CDCompany+CoreDataClass.h"
+#import "CDProduct+CoreDataClass.h"
 
 
-static NSMutableArray *_companies;
+static NSInteger _companyCount = 0;
+static NSManagedObjectContext *_managedObjectContext;
+static NSPersistentContainer *_persistentContainer;
 
 
 @implementation DataAccessObject
@@ -34,7 +40,9 @@ static NSMutableArray *_companies;
     dispatch_once(&oncePredicate,
                   ^{
                       _sharedInstance = [[DataAccessObject alloc] init];
-                      _companies = [[NSMutableArray alloc] init];
+                      
+                      _persistentContainer = ((NavControllerAppDelegate *)[UIApplication sharedApplication].delegate).persistentContainer;
+                      _managedObjectContext = _persistentContainer.viewContext;
                   });
     
     return _sharedInstance;
@@ -50,7 +58,7 @@ static NSMutableArray *_companies;
                  andLogoURL:(NSString *)logoURL
 {
     // Get the display index for the new company
-    NSInteger index = _companies.count;
+    NSInteger index = _companyCount;
     
     // If limit exceeded then ...
     if (index >= MAX_COMPANIES)
@@ -64,26 +72,46 @@ static NSMutableArray *_companies;
     else
     {
         // Load the field values into a company record
-        Company *newCompany = [[Company alloc] initWithName:name
-                                             andStockSymbol:stockSymbol
-                                              andStockPrice:nil
-                                                 andLogoURL:logoURL];
+        Company *company = [[Company alloc] initWithName:[name copy]
+                                          andStockSymbol:[stockSymbol copy]
+                                              andLogoURL:[logoURL copy]];
         
-        // Append the company to the "database"
-        [_companies addObject:newCompany];
-
         // Download the company logo from the internet in the background
         dispatch_async(dispatch_get_global_queue(0,0),
                        ^{
-                           NSURL *url = [NSURL URLWithString:logoURL];
-                           newCompany.logoData = [[NSData alloc] initWithContentsOfURL:url];
+                           NSError *error = nil;
                            
-                           // Notify delegate that the company was added
-                           dispatch_async(dispatch_get_main_queue(),
-                                          ^{
-                                              [self.companyDelegate didInsertCompany:[newCompany copy]
-                                                                    withDisplayIndex:index];
-                                          });
+                           NSURL *url = [NSURL URLWithString:company.logoURL];
+                           company.logoData = [[NSData alloc] initWithContentsOfURL:url];
+
+                           // Persist the company in core data
+                           CDCompany *moCompany = [NSEntityDescription insertNewObjectForEntityForName:@"CDCompany"
+                                                                                inManagedObjectContext:_managedObjectContext];
+                           
+                           
+                           [self company:company toNSManagedObject:moCompany];
+                           moCompany.displayIndex = index;
+
+                           // If successful then ...
+                           if ([_managedObjectContext save:&error])
+                           {
+                               // increment counter
+                               ++_companyCount;
+                               
+                               // Notify delegate that the company was sucessfully added
+                               dispatch_async(dispatch_get_main_queue(),
+                                              ^{
+                                                  [self.companyDelegate didInsertCompany:company
+                                                                        withDisplayIndex:index];
+                                              });
+                           }
+                           // Otherwise, ...
+                           else
+                               // Notify delegate of the error
+                               dispatch_async(dispatch_get_main_queue(),
+                                              ^{
+                                                  [self.companyDelegate didGetDAOError:[error localizedDescription]];
+                                              });
                        });
     }
 }
@@ -98,32 +126,49 @@ static NSMutableArray *_companies;
          andProductImageURL:(NSString *)productImageURL
                   toCompany:(NSString *)companyName;
 {
-    // Get the company record
-    Company *company = [self findCompany:companyName];
-    
-    // If not found then exit routine.
-    if (nil == company)
-        return;
-    
+    CDCompany *moCompany = [self findCompany:companyName
+                              withPrefetch:YES];
+
     // Load the field values into a product record
-    Product *newProduct = [[Product alloc] initWithName:name
-                                                 andURL:productURL
-                                            andImageURL:productImageURL];
-
-    // Append to the company's product list
-    [company.products addObject:newProduct];
-
+    Product *product = [[Product alloc] initWithName:[name copy]
+                                              andURL:[productURL copy]
+                                         andImageURL:[productImageURL copy]];
+    
     // Download the product image from the internet in the background
     dispatch_async(dispatch_get_global_queue(0,0),
                    ^{
+                       NSError *error;
                        NSURL *url = [NSURL URLWithString:productImageURL];
-                       newProduct.imageData = [[NSData alloc] initWithContentsOfURL:url];
-                       
-                       // Notify delegate that the product was added
-                       dispatch_async(dispatch_get_main_queue(),
-                                      ^{
-                                          [self.productDelegate didAddProduct:[newProduct copy]];
-                                      });
+                       product.imageData = [[NSData alloc] initWithContentsOfURL:url];
+
+                       // Initialize core data version of the new product
+                       CDProduct *moProduct = [NSEntityDescription insertNewObjectForEntityForName:@"CDProduct"
+                                                                                             inManagedObjectContext:_managedObjectContext];
+                       moProduct.name = product.name;
+                       moProduct.url = product.url;
+                       moProduct.imageURL = product.imageURL;
+                       moProduct.displayIndex = [moCompany.companyToProducts count];
+                       moProduct.imageData = product.imageData;
+
+                       moProduct.productToCompany = moCompany;
+
+                       // If successfully persisted the updates then ...
+                       if ([_managedObjectContext save:&error])
+                           // Notify delegate of the product update
+                           dispatch_async(dispatch_get_main_queue(),
+                                          ^{
+                                              [self.productDelegate didAddProduct:product];
+                                          });
+                       else
+                       {
+                           [self showDetailedCoreDataError:error];
+
+                           // Notify delegate of the error
+                           dispatch_async(dispatch_get_main_queue(),
+                                          ^{
+                                              [self.companyDelegate didGetDAOError:[error localizedDescription]];
+                                          });
+                       }
                    });
 }
 
@@ -134,45 +179,52 @@ static NSMutableArray *_companies;
 //////////////////////////////////////////////////////////////////////////////////////////
 - (void) deleteCompanyWithDisplayIndex:(NSInteger)index
 {
-    // If index is valid then ...
-    if (index < _companies.count)
-    {
-        // Delete the company record
-        [_companies removeObjectAtIndex:index];
-        
-        // Notify delegate that the company was deleted
-        [self.companyDelegate didDeleteCompanyWithDisplayIndex:index];
-    }
-}
+    NSAssert(index < _companyCount, @"Deleting a company with an invalid index");
 
-//////////////////////////////////////////////////////////////////////////////////////////
-//
-//  Method to delete a product from a company's product list.
-//
-//////////////////////////////////////////////////////////////////////////////////////////
-- (void) deleteProduct:(NSString *)productName
-           fromCompany:(NSString *)companyName
-{
-    // Get the company record
-    Company *company = [self findCompany:companyName];
-    
-    // If not found then exit routine.
-    if (nil == company)
-        return;
-    
-    // Search for the product in the company product list
-    NSInteger index = [self findProduct:productName
-                                     in:company.products];
-    
-    // If not found then exit routine
-    if (-1 == index)
-        return;
-    
-    // Remove the product from the list
-    [company.products removeObjectAtIndex:index];
-    
-    // Notify delegate that the product was deleted
-    [self.productDelegate didDeleteProduct:productName];
+    // Initialize request to fetch all companies with displayIndex >= index
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    [request setEntity:[NSEntityDescription entityForName:@"CDCompany"
+                                   inManagedObjectContext:_managedObjectContext]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"displayIndex >= %ld", index];
+    [request setPredicate:predicate];
+
+    // Execute the request
+    NSError *error = nil;
+    NSArray *companyManagedObjectArray = [_managedObjectContext executeFetchRequest:request
+                                                                              error:&error];
+
+    // If successful then ...
+    if (!error)
+    {
+        // Loop through the company list
+        for (CDCompany *moCompany in companyManagedObjectArray)
+            // If the display index matches the argument then ...
+            if (index == moCompany.displayIndex)
+                // delete the company
+                [_managedObjectContext deleteObject:moCompany];
+            // Otherwise, ...
+            else
+                // shift the display index down by 1
+                --moCompany.displayIndex;
+
+        // If sucessfully saved all changes then ...
+        if ([_managedObjectContext save:&error])
+        {
+            // decrement counter
+            --_companyCount;
+            
+            // Notify delegate that the company was successfully deleted
+            [self.companyDelegate didDeleteCompanyWithDisplayIndex:index];
+            return;
+        }
+        // Otherwise, ...
+        else
+            // clear the all the changes from context
+            [_managedObjectContext reset];
+    }
+
+    // Notify delegate of the error
+    [self.companyDelegate didGetDAOError:[error localizedDescription]];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -183,18 +235,45 @@ static NSMutableArray *_companies;
 - (void) deleteProductWithDisplayIndex:(NSInteger)index
                            fromCompany:(NSString *)name
 {
+    CDProduct *hold;
+    NSError *error;
+
     // Get the company record
-    Company *company = [self findCompany:name];
+    CDCompany *moCompany = [self findCompany:name withPrefetch:YES];
     
-    // If not found then exit routine.
-    if (nil == company)
-        return;
+    NSAssert(index < moCompany.companyToProducts.count, @"Deleting a product with an invalid index.");
+
+    // Loop through the product list
+    for (CDProduct *moProduct in moCompany.companyToProducts)
+        // If it matches the argument then ...
+        if (moProduct.displayIndex == index)
+            // hold on to it temporarily
+            hold = moProduct;
+        // Otherwise, if the display index is bigger than the argument then ...
+        else if (moProduct.displayIndex > index)
+            // shift the display index down
+            --moProduct.displayIndex;
     
-    // Remove the product from the list
-    [company.products removeObjectAtIndex:index];
+    // Now that the fast enumeration loop has completed, we can delete the product.
+    [_managedObjectContext deleteObject:hold];
     
-    // Notify delegate that the product was deleted
-    [self.productDelegate didDeleteProductWithDisplayIndex:index];
+    // Remove it from the company product list
+    [moCompany removeCompanyToProducts:[NSSet setWithObject:hold]];
+    
+    // If successfully persist the deletion then ...
+    if ([_managedObjectContext save:&error])
+        // Notify delegate that the product was deleted
+        [self.productDelegate didDeleteProductWithDisplayIndex:index];
+    // Otherwise, ...
+    else
+    {
+        // clear all the changes from the context
+        [_managedObjectContext reset];
+        
+        // Notify delegate of the error
+        [self.companyDelegate didGetDAOError:[error localizedDescription]];
+    }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -204,21 +283,7 @@ static NSMutableArray *_companies;
 //////////////////////////////////////////////////////////////////////////////////////////
 - (NSInteger) getCompanyCount
 {
-    return _companies.count;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////
-//
-//  Method to return the record of a company using the name as a key.
-//
-//////////////////////////////////////////////////////////////////////////////////////////
-- (Company *) getCompanyWithName:(NSString *)name
-{
-    // Search for the company record
-    Company *company = [self findCompany:name];
-    
-    // If found then return a copy otherwise return nil to indicate company not found.
-    return (company)? [company copy] : nil;
+    return _companyCount;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -229,12 +294,64 @@ static NSMutableArray *_companies;
 - (void) insertCompany:(Company *)company
       withDisplayIndex:(NSInteger)index
 {
-    // Insert the company
-    [_companies insertObject:[company copy] atIndex:index];
+    CDCompany *moCompany;
+    NSError *error = nil;
 
-    // Notify delegate of the insertion
-    [self.companyDelegate didInsertCompany:company
-                          withDisplayIndex:index];
+    NSAssert(index <= _companyCount, @"Inserting a company with an invalid index.");
+
+    // If not appending then ...
+    if (index != _companyCount - 1)
+    {
+        // Initialize request to fetch all companies with displayIndex >= index
+        NSFetchRequest *request = [[NSFetchRequest alloc] init];
+        [request setEntity:[NSEntityDescription entityForName:@"CDCompany"
+                                       inManagedObjectContext:_managedObjectContext]];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"displayIndex >= %ld", index];
+        [request setPredicate:predicate];
+        
+        // Execute the request
+        NSArray *companyArray = [_managedObjectContext executeFetchRequest:request
+                                                                     error:&error];
+        
+        // If failed then ...
+        if (error)
+        {
+            // Notify delegate of the error
+            [self.companyDelegate didGetDAOError:[error localizedDescription]];
+            return;
+        }
+        
+        // Loop through the company list
+        for (moCompany in companyArray)
+            // shift the display index up by 1
+            ++moCompany.displayIndex;
+    }
+
+    // Initialize a core data version of the company
+    moCompany = [NSEntityDescription insertNewObjectForEntityForName:@"CDCompany"
+                                              inManagedObjectContext:_managedObjectContext];
+    [self company:company toNSManagedObject:moCompany];
+    moCompany.displayIndex = index;
+
+    // If successfully persist the new company then ...
+    if ([_managedObjectContext save:&error])
+    {
+        // increment count
+        ++_companyCount;
+        
+        // Notify delegate that the company was inserted
+        [self.companyDelegate didInsertCompany:company
+                              withDisplayIndex:index];
+    }
+    // Otherwise, ...
+    else
+    {
+        // clear all the changes from the context
+        [_managedObjectContext reset];
+
+        // Notify delegate of the error
+        [self.companyDelegate didGetDAOError:[error localizedDescription]];
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -244,10 +361,72 @@ static NSMutableArray *_companies;
 //////////////////////////////////////////////////////////////////////////////////////////
 - (void) readAll
 {
-    NSMutableArray *copyOfCompanies = [[NSMutableArray alloc] initWithArray:_companies copyItems:YES];
+    NSError *error = nil;
+
+    // Initialize request to get all the companies, sorted by their displayIndex
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    [request setEntity:[NSEntityDescription entityForName:@"CDCompany"
+                                   inManagedObjectContext:_managedObjectContext]];
+    NSMutableArray *sortArray = [NSMutableArray array];
+    [sortArray addObject:[[NSSortDescriptor alloc] initWithKey:@"displayIndex"
+                                                     ascending:YES]];
+    [request setSortDescriptors:sortArray];
+    
+    // Execute the request
+    NSArray *companyArray = [_managedObjectContext executeFetchRequest:request
+                                                                 error:&error];
+    
+    // if request failed then ...
+    if (error)
+    {
+        // Notify the delegate of the error
+        [self.companyDelegate didGetDAOError:[error localizedDescription]];
+        return;
+    }
+
+    // Initialize array for storing companies from core data
+    NSMutableArray *companies = [[NSMutableArray alloc] init];
+    
+    // Loop through the company list
+    for (CDCompany *moCompany in companyArray)
+    {
+        // Convert the core data version of the company to a company object
+        Company *company = [[Company alloc] initWithName:moCompany.name
+                                          andStockSymbol:moCompany.stockSymbol
+                                              andLogoURL:moCompany.logoURL];
+        company.logoData = moCompany.logoData;
+
+        // Get the product list for the company
+        NSMutableSet *productSet = [moCompany mutableSetValueForKey:@"companyToProducts"];
+        
+        // Initialize the company object's product list
+        company.products = [[NSMutableArray alloc] initWithCapacity:productSet.count];
+        for (NSInteger i = 0; i < productSet.count; ++i)
+            [company.products addObject:[NSNull null]];
+        
+        // Loop through the product list
+        for (CDProduct *moProduct in moCompany.companyToProducts)
+        {
+            // Transfer the field values to a product object
+            Product *product = [[Product alloc] initWithName:moProduct.name
+                                                      andURL:moProduct.url
+                                                 andImageURL:moProduct.imageURL];
+            product.imageData = moProduct.imageData;
+            
+            // Insert the product object into the product list in its displayIndex order
+            [company.products replaceObjectAtIndex:moProduct.displayIndex
+                                        withObject:product];
+        }
+
+        // Append the company object to the list
+        [companies addObject:company];
+    }
+    
+    // save the count
+    _companyCount = companies.count;
     
     // Notify delegate that all companies have been read
-    [self.companyDelegate didReadAll:copyOfCompanies];
+    [self.companyDelegate didReadAll:companies];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -258,20 +437,68 @@ static NSMutableArray *_companies;
 - (void) updateCompanyDisplayIndexFrom:(NSInteger)currentIndex
                                     to:(NSInteger)newIndex
 {
-    // If both indexes are valid then ...
-    if (currentIndex < _companies.count && newIndex <= _companies.count)
+    NSInteger delta;
+    NSInteger lowerBound;
+    NSInteger upperBound;
+    NSError *error = nil;
+    
+    // If increasing display index then ...
+    if (currentIndex < newIndex)
     {
-        Company *temp = _companies[currentIndex];
-        
-        // Delete the company record in the current slot
-        [_companies removeObjectAtIndex:currentIndex];
-        
-        // Insert the company record in the new slot
-        [_companies insertObject:temp atIndex:newIndex];
-        
+        delta = -1;
+        lowerBound = currentIndex;
+        upperBound = newIndex;
+    }
+    else
+    {
+        delta = 1;
+        lowerBound = newIndex;
+        upperBound = currentIndex;
+    }
+    
+    // Initialize request to fetch all companies in the displayIndex range
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    [request setEntity:[NSEntityDescription entityForName:@"CDCompany"
+                                   inManagedObjectContext:_managedObjectContext]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"displayIndex >= %d and displayIndex <= %d", lowerBound, upperBound];
+    [request setPredicate:predicate];
+
+    // Execute the request
+    NSArray *companies = [_managedObjectContext executeFetchRequest:request
+                                                              error:&error];
+
+    // if unable to get the companies then ...
+    if (error)
+    {
+        // Notify the delegate of the error
+        [self.companyDelegate didGetDAOError:[error localizedDescription]];
+        return;
+    }
+
+    // Loop through the company list
+    for (CDCompany *moCompany in companies)
+        // If it matches then ...
+        if (currentIndex == moCompany.displayIndex)
+            // change it to the new value
+            moCompany.displayIndex = newIndex;
+        // Otherwise, ...
+        else
+            // shift the display index by 1
+            moCompany.displayIndex += delta;
+
+    // If successfully persisted the updates then ...
+    if ([_managedObjectContext save:&error])
         // Notify delegate of the display order change
         [self.companyDelegate didUpdateCompanyDisplayIndexFrom:currentIndex
                                                             to:newIndex];
+    // Otherwise, ...
+    else
+    {
+        // clear all the changes from the context
+        [_managedObjectContext reset];
+
+        // notify delegate of the error
+        [self.companyDelegate didGetDAOError:[error localizedDescription]];
     }
 }
 
@@ -285,47 +512,60 @@ static NSMutableArray *_companies;
                withStockSymbol:(NSString *)stockSymbol
                     andLogoURL:(NSString *)logoURL
 {
+    NSError *error = nil;
+
     // Get the company record
-    Company *company = [self findCompany:currentName];
-
-    // If not found then exit routine.
-    if (nil == company)
-        return;
+    CDCompany *moCompany = [self findCompany:currentName withPrefetch:NO];
+    moCompany.name = newName;
+    moCompany.stockSymbol = stockSymbol;
     
-    // If the name has changed then ...
-    if (![company.name isEqualToString:newName])
-        // copy the new name into the company record
-        company.name = [newName copy];
-
-    // If the stock symbol has changed then ...
-    if (![company.stockSymbol isEqualToString:stockSymbol])
-        // copy the new stock symbol into the company record
-        company.stockSymbol = [stockSymbol copy];
+    Company *company = [[Company alloc] initWithName:newName
+                                      andStockSymbol:stockSymbol
+                                          andLogoURL:logoURL];
 
     // If the logo url has changed then ...
-    if (![company.logoURL isEqualToString:logoURL])
+    if (![moCompany.logoURL isEqualToString:logoURL])
     {
         // copy the new logo URL into the company record
-        company.logoURL = [logoURL copy];
+        moCompany.logoURL = logoURL;
         
         // download the new logo in the background
         dispatch_async(dispatch_get_global_queue(0,0),
                        ^{
+                           NSError *error = nil;
                            NSURL *url = [NSURL URLWithString:logoURL];
                            company.logoData = [[NSData alloc] initWithContentsOfURL:url];
+                           moCompany.logoData = company.logoData;
                            
-                           // Notify delegate of the company update
-                           dispatch_async(dispatch_get_main_queue(),
-                                          ^{
-                                              [self.companyDelegate didUpdateCompany:[company copy]
-                                                                            withName:currentName];
-                                          });
+                           // If successfully persisted the updates then ...
+                           if ([_managedObjectContext save:&error])
+                               // Notify delegate of the company update
+                               dispatch_async(dispatch_get_main_queue(),
+                                              ^{
+                                                  [self.companyDelegate didUpdateCompany:company
+                                                                                withName:currentName];
+                                              });
+                           else
+                               // Notify delegate of the error
+                               dispatch_async(dispatch_get_main_queue(),
+                                              ^{
+                                                  [self.companyDelegate didGetDAOError:[error localizedDescription]];
+                                              });
                        });
+        return;
     }
     else
-        // Notify delegate of the company update
-        [self.companyDelegate didUpdateCompany:[company copy]
+        company.logoData = [moCompany.logoData copy];
+
+    // If successfully persisted the updates then ...
+    if ([_managedObjectContext save:&error])
+        // notify delegate of the company update
+        [self.companyDelegate didUpdateCompany:company
                                       withName:currentName];
+    // Otherwise, ...
+    else
+        // notify delegate of the error
+        [self.companyDelegate didGetDAOError:[error localizedDescription]];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -339,96 +579,182 @@ static NSMutableArray *_companies;
             andProductImageURL:(NSString *)productImageURL
                      inCompany:(NSString *)companyName;
 {
-    BOOL dataChanged;
+    NSError *error = nil;
 
-    // Search for the company record
-    Company *company = [self findCompany:companyName];
+    // Initialize request to fetch a specific product
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    [request setEntity:[NSEntityDescription entityForName:@"CDProduct"
+                                   inManagedObjectContext:_managedObjectContext]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name = %@", currentName];
+    [request setPredicate:predicate];
     
-    // If not found then exit routine.
-    if (nil == company)
-        return;
+    // Execute the request
+    NSArray *productArray = [_managedObjectContext executeFetchRequest:request
+                                                                 error:&error];
+    CDProduct *moProduct = productArray[0];
     
-    NSInteger index = [self findProduct:currentName
-                                     in:company.products];
-
-    // If not found then exit routine.
-    if (-1 == index)
-        return;
-    
-    Product *product = company.products[index];
-
-    // If the name has changed then ...
-    if (![product.name isEqualToString:newName])
+    // If the request failed then ...
+    if (error)
     {
-        // copy the new name into the product record
-        product.name = [newName copy];
-        
-        dataChanged = YES;
+        // Notify the delegate of the error
+        [self.companyDelegate didGetDAOError:[error localizedDescription]];
+        return;
     }
+    
+    Product *product = [[Product alloc] initWithName:[newName copy]
+                                              andURL:[productURL copy]
+                                         andImageURL:[productImageURL copy]];
 
-    // If the url has changed then ...
-    if (![product.url isEqualToString:productURL])
-    {
-        // copy the new url into the product record
-        product.url = [productURL copy];
-        
-        dataChanged = YES;
-    }
+    moProduct.name = newName;
+    moProduct.url = productURL;
     
     // If the image url has changed then ...
-    if (![product.imageURL isEqualToString:productImageURL])
+    if (![moProduct.imageURL isEqualToString:productImageURL])
     {
-        // Copy the new image url into the product record
-        product.imageURL = [productImageURL copy];
-    
+        moProduct.imageURL = productImageURL;
+
         // Download the product image from the internet in the background
         dispatch_async(dispatch_get_global_queue(0,0),
                        ^{
+                           NSError *error;
                            NSURL *url = [NSURL URLWithString:productImageURL];
                            product.imageData = [[NSData alloc] initWithContentsOfURL:url];
-
-                           // Notify delegate of the product update
-                           dispatch_async(dispatch_get_main_queue(),
-                                          ^{
-                                              [self.productDelegate didUpdateProduct:[product copy]
-                                                                            withName:currentName];
-                                          });
+                           moProduct.imageData = product.imageData;
+                           
+                           // If successfully persisted the updates then ...
+                           if ([_managedObjectContext save:&error])
+                               // Notify delegate of the product update
+                               dispatch_async(dispatch_get_main_queue(),
+                                              ^{
+                                                  [self.productDelegate didUpdateProduct:product
+                                                                                withName:currentName];
+                                              });
+                           else
+                               // Notify delegate of the error
+                               dispatch_async(dispatch_get_main_queue(),
+                                              ^{
+                                                  [self.companyDelegate didGetDAOError:[error localizedDescription]];
+                                              });
                        });
+        return;
     }
-    else if (dataChanged)
-        [self.productDelegate didUpdateProduct:[product copy]
+    else
+        product.imageData = [moProduct.imageData copy];
+    
+    // If successfully persisted the updates then ...
+    if ([_managedObjectContext save:&error])
+        // notify delegate of the product update
+        [self.productDelegate didUpdateProduct:product
                                       withName:currentName];
+    // Otherwise, ...
+    else
+        // notify delegate of the error
+        [self.companyDelegate didGetDAOError:[error localizedDescription]];
 }
 
 #pragma mark - Private Methods
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Method to linearly search the _companies array for a company.
+//  Method to get a core data version of company.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (Company *) findCompany:(NSString *)name
+- (CDCompany *) findCompany:(NSString *)name
+               withPrefetch:(BOOL)prefetchEnabled
 {
-    for (NSInteger i = 0; i < _companies.count; ++i)
-        if ([((Company *) _companies[i]).name isEqualToString:name])
-            return _companies[i];
+    // Initialize request to fetch the company where name = companyName
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    [request setEntity:[NSEntityDescription entityForName:@"CDCompany"
+                                   inManagedObjectContext:_managedObjectContext]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name = %@", name];
+    [request setPredicate:predicate];
     
-    return nil;
+    if (prefetchEnabled)
+        [request setRelationshipKeyPathsForPrefetching:@[@"companyToProducts"]];
+
+    // Execute the request
+    NSError *error = nil;
+    NSArray *results = [_managedObjectContext executeFetchRequest:request
+                                                            error:&error];
+    
+    if (error)
+    {
+        // notify delegate of the error
+        [self.companyDelegate didGetDAOError:[error localizedDescription]];
+        
+        return nil;
+    }
+    else
+        return (CDCompany *)results[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Method to linearly search the products array for a product.
+//  Method to transfer the data from a company to a CDCompany.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-- (NSInteger) findProduct:(NSString *)name
-                       in:(NSMutableArray *)products
+- (void) company:(Company *)company toNSManagedObject:(CDCompany *)moCompany
 {
-    for (NSInteger i = 0; i < products.count; ++i)
-        if ([((Product *) products[i]).name isEqualToString:name])
-            return i;
-    
-    return -1;
+    moCompany.name = company.name;
+    moCompany.stockSymbol = company.stockSymbol;
+    moCompany.logoURL = company.logoURL;
+    moCompany.logoData = company.logoData;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Method, used in development, to show a core data error in detail.
+//  The code with minor modifications is from:
+//  http://stackoverflow.com/questions/1283960/iphone-core-data-unresolved-error-while-saving/1297157#1297157
+//
+//////////////////////////////////////////////////////////////////////////////////////////
+- (void) showDetailedCoreDataError:(NSError *) error
+{
+    // If Cocoa generated the error...
+    if ([[error domain] isEqualToString:@"NSCocoaErrorDomain"])
+    {
+        NSDictionary *userInfo = [error userInfo];
+
+        // ...check whether there's an NSDetailedErrors array
+        if ([userInfo valueForKey:@"NSDetailedErrors"] != nil)
+        {
+            // ...and loop through the array, if so.
+            NSArray *errors = [userInfo valueForKey:@"NSDetailedErrors"];
+            for (NSError *anError in errors)
+            {
+                NSDictionary *subUserInfo = [anError userInfo];
+                subUserInfo = [anError userInfo];
+                // Granted, this indents the NSValidation keys rather a lot
+                // ...but it's a small loss to keep the code more readable.
+                NSLog(@"Core Data Save Error\n\n \
+                      NSValidationErrorKey\n%@\n\n \
+                      NSValidationErrorPredicate\n%@\n\n \
+                      NSValidationErrorObject\n%@\n\n \
+                      NSLocalizedDescription\n%@",
+                      [subUserInfo valueForKey:@"NSValidationErrorKey"],
+                      [subUserInfo valueForKey:@"NSValidationErrorPredicate"],
+                      [subUserInfo valueForKey:@"NSValidationErrorObject"],
+                      [subUserInfo valueForKey:@"NSLocalizedDescription"]);
+            }
+        }
+        // If there was no NSDetailedErrors array, print values directly
+        // from the top-level userInfo object. (Hint: all of these keys
+        // will have null values when you've got multiple errors sitting
+        // behind the NSDetailedErrors key.
+        else
+            NSLog(@"Core Data Save Error\n\n \
+                  NSValidationErrorKey\n%@\n\n \
+                  NSValidationErrorPredicate\n%@\n\n \
+                  NSValidationErrorObject\n%@\n\n \
+                  NSLocalizedDescription\n%@",
+                  [userInfo valueForKey:@"NSValidationErrorKey"],
+                  [userInfo valueForKey:@"NSValidationErrorPredicate"],
+                  [userInfo valueForKey:@"NSValidationErrorObject"],
+                  [userInfo valueForKey:@"NSLocalizedDescription"]);
+    }
+    // Handle mine--or 3rd party-generated--errors
+    else
+        NSLog(@"Custom Error: %@", [error localizedDescription]);
 }
 
 @end

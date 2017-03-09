@@ -67,15 +67,13 @@
 
 - (void) deleteCompanyWithDisplayIndex:(NSInteger)index;
 
-- (void) deleteProduct:(NSString *)productName
-           fromCompany:(NSString *)companyName;
+//- (void) deleteProduct:(NSString *)productName
+//           fromCompany:(NSString *)companyName;
 
 - (void) deleteProductWithDisplayIndex:(NSInteger)index
                            fromCompany:(NSString *)name;
 
 - (NSInteger) getCompanyCount;
-
-- (Company *) getCompanyWithName:(NSString *)name;
 
 - (void) insertCompany:(Company *)company
       withDisplayIndex:(NSInteger)index;
