@@ -96,6 +96,7 @@
         label.textColor = UIColor.lightGrayColor;
         // Add the label to the scroll view
         [_scrollView addSubview:label];
+        [label release];
         
         // Calculate position for the next control
         y += LABEL_HEIGHT + SEPARATION_SIZE;
@@ -114,6 +115,7 @@
         textField.isAccessibilityElement = YES;
         // Add the text field to the scroll view
         [_scrollView addSubview:textField];
+        [textField release];
         
         // Calculate position for the next control
         y += TEXTFIELD_HEIGHT + SEPARATION_SIZE;
@@ -138,6 +140,7 @@
                    action:@selector(deleteButtonTouched:)
          forControlEvents:UIControlEventTouchUpInside];
         [_scrollView addSubview:button];
+        [button release];
 
         // Transfer data to textfields
         ((UITextField *)_textFields[0]).text = [self.textEntry1 copy];
@@ -237,7 +240,16 @@
 {
     // Unregister for keyboard notification
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
+
+    // Clean up
+    [_labelText release];
+    [_scrollView release];
+    [_textFields release];
+    if (_rightButtonType)
+        [self.navigationItem.rightBarButtonItem release];
+    if (_leftButtonType)
+        [self.navigationItem.leftBarButtonItem release];
+
     // Return to the previous controller
     [self.navigationController popViewControllerAnimated:NO];
 }

@@ -37,10 +37,10 @@
     self.navigationItem.leftBarButtonItem = backButton;
 
     // Add an edit button on the right side of the navigation bar
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Edit"
+    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Edit"
                                                                               style:UIBarButtonItemStylePlain
                                                                              target:self
-                                                                             action:@selector(gotoEditScreen)];
+                                                                             action:@selector(gotoEditScreen)] autorelease];
 
     // Create a webView
     WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
@@ -50,6 +50,10 @@
     // Load the web page for the product
     NSURL *url = [NSURL URLWithString:self.product.url];
     [_webView loadRequest:[NSURLRequest requestWithURL:url]];
+    
+    // Clean up
+    [backButton release];
+    [configuration release];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -133,6 +137,9 @@
     
     // Go to the entry screen
     [self.navigationController pushViewController:entryViewController animated:YES];
+    
+    // Clean up
+    [entryViewController release];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -142,6 +149,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////
 - (void)performBackNavigation:(id)sender
 {
+    // Clean up
+    [_webView release];
+
+    // Exit current controller
     [self.navigationController popViewControllerAnimated:NO];
 }
 

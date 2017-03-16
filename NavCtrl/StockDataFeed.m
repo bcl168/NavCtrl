@@ -93,7 +93,7 @@
                                                      repeats:YES];
     // Otherwise, ...
     else
-        // Request the stock stock data feed be scheduled with the main thread
+        // Request the stock data feed be scheduled with the main thread
         dispatch_async(dispatch_get_main_queue(),
                        ^{
                            _feedTimer = [NSTimer scheduledTimerWithTimeInterval:feedInterval
@@ -237,6 +237,7 @@
 
                                               // Break up the csv into an array of rows
                                               NSArray *rows = [content componentsSeparatedByString:@"\n"];
+                                              [content release];
                                               
                                               // Initialize the dictionary
                                               NSMutableDictionary *stockSymbolsAndPrices = [[NSMutableDictionary alloc] init];
@@ -267,6 +268,7 @@
                                               dispatch_async(dispatch_get_main_queue(),
                                                              ^{
                                                                  [self.delegate didGetStockData:stockSymbolsAndPrices];
+                                                                 [stockSymbolsAndPrices release];
                                                              });
                                               return;
                                           }

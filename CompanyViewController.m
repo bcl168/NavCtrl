@@ -209,6 +209,9 @@
         
         // Display the entryViewController
         [self.navigationController pushViewController:entryViewController animated:YES];
+        
+        // Clean up
+        [entryViewController release];
     }
     else
     {
@@ -218,6 +221,9 @@
 
         // Display the productViewController
         [self.navigationController pushViewController:productViewController animated:YES];
+        
+        // Clean up
+        [productViewController release];
     }
 }
 
@@ -295,6 +301,9 @@
     
     // Display the screen
     [self.navigationController pushViewController:entryViewController animated:YES];
+    
+    // Clean up
+    [entryViewController release];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -349,6 +358,10 @@
     
     // Load it into the current ViewController
     [self.view addSubview:_noAddedCompanyView];
+    
+    // Clean up
+    [iconImageView release];
+    [msg release];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -434,6 +447,11 @@
                                                                        action:@selector(undoButtonTouched)];
             NSArray *buttons = [NSArray arrayWithObjects: flexibleSpace, button1, flexibleSpace, button2, flexibleSpace, nil];
             [self setToolbarItems:buttons animated:YES];
+            
+            // Clean up
+            [flexibleSpace release];
+            [button1 release];
+            [button2 release];
         }
     }
     // Otherwise, ...
@@ -451,7 +469,6 @@
         
         // hide the toolbar on the bottom of the screen
         [self.navigationController setToolbarHidden:YES];
-        NSLog(@"navigationBarHidden: %d", self.navigationController.navigationBarHidden);
     }
 }
 
@@ -473,7 +490,8 @@
 - (void)unloadCompanyTableView
 {
     [_tableView removeFromSuperview];
-    _tableView = nil;
+    
+    [_tableView release];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }

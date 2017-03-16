@@ -99,7 +99,7 @@
     [textEntry1TextField typeText:@"AMZN"];
     [textEntry1TextField swipeUp];
     [textEntry2TextField tap];
-    [textEntry2TextField typeText:@"https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Amazon.com-Logo.svg/320px-Amazon.com-Logo.svg.png"];
+    [textEntry2TextField typeText:@"https://s3.amazonaws.com/BURC_Pages/downloads/a_com_logo_cldb.png"];
     [saveButton tap];
     
     XCUIElementQuery *tablesQuery = app.tables;

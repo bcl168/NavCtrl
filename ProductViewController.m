@@ -12,6 +12,7 @@
 #import "EntryViewController.h"
 #import "ProductViewController.h"
 #import "ProductListManager.h"
+#import "UIImage+Resize.h"
 
 
 @implementation ProductViewController
@@ -75,7 +76,8 @@
     // Create imageView for displaying the logo
     UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake((width - LOGO_SIZE) / 2.0, PADDING_SIZE - 1.0,
                                                                            LOGO_SIZE, LOGO_SIZE)];
-    imageView.image = [UIImage imageWithData:self.company.logoData];
+    CGSize newSize = CGSizeMake(LOGO_SIZE, LOGO_SIZE);
+    imageView.image = [[UIImage imageWithData:self.company.logoData] scaleToSize:newSize];
     [headerView addSubview:imageView];
     
     // Create label for displaying company name and stock symbol
@@ -103,6 +105,12 @@
     else
         // display the there are no added product screen.
         [self displayNoAddedProductView];
+    
+    // Clean up
+    [backButton release];
+    [imageView release];
+    [companyLabel release];
+    [headerView release];
 }
 
 #pragma mark - ProductListManager Delegate Methods
@@ -201,6 +209,9 @@
 
     // Display the DetailViewController.
     [self.navigationController pushViewController:productDetailScreen animated:YES];
+    
+    // Clean up
+    [productDetailScreen release];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -244,6 +255,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////
 - (void) displayAddProduct
 {
+    // Initialize the entryViewController
     EntryViewController *entryViewController = [[EntryViewController alloc] init];
     [entryViewController setNavigationBarAttributes:@"Add Product"
                            leftNavigationButtonType:EntryViewNavigationBackButton
@@ -253,7 +265,11 @@
                          andTextFieldLabel3:@"Image URL:"];
     entryViewController.delegate = _productListMgr.editor;
     
+    // Display the entryViewController
     [self.navigationController pushViewController:entryViewController animated:YES];
+    
+    // Clean up
+    [entryViewController release];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -299,6 +315,9 @@
     [_addProductView addSubview:button];
     
     [self.view addSubview:_addProductView];
+    
+    // Clean up
+    [msg release];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -346,6 +365,11 @@
 - (void) performBackNavigation:(id)sender
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    // Clean up
+    _addProductView = nil;
+    [_productListMgr release];
+    _tableView = nil;
 
     // Exit current screen
     [self.navigationController popViewControllerAnimated:NO];

@@ -112,6 +112,9 @@ static NSPersistentContainer *_persistentContainer;
                                               ^{
                                                   [self.companyDelegate didGetDAOError:[error localizedDescription]];
                                               });
+                           
+                           // Clean up
+                           [_managedObjectContext reset];
                        });
     }
 }
@@ -193,6 +196,8 @@ static NSPersistentContainer *_persistentContainer;
     NSArray *companyManagedObjectArray = [_managedObjectContext executeFetchRequest:request
                                                                               error:&error];
 
+    [request release];
+
     // If successful then ...
     if (!error)
     {
@@ -215,6 +220,7 @@ static NSPersistentContainer *_persistentContainer;
             
             // Notify delegate that the company was successfully deleted
             [self.companyDelegate didDeleteCompanyWithDisplayIndex:index];
+            
             return;
         }
         // Otherwise, ...
@@ -266,14 +272,11 @@ static NSPersistentContainer *_persistentContainer;
         [self.productDelegate didDeleteProductWithDisplayIndex:index];
     // Otherwise, ...
     else
-    {
-        // clear all the changes from the context
-        [_managedObjectContext reset];
-        
         // Notify delegate of the error
         [self.companyDelegate didGetDAOError:[error localizedDescription]];
-    }
 
+    // clear memory
+    [_managedObjectContext reset];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -313,6 +316,8 @@ static NSPersistentContainer *_persistentContainer;
         NSArray *companyArray = [_managedObjectContext executeFetchRequest:request
                                                                      error:&error];
         
+        [request release];
+
         // If failed then ...
         if (error)
         {
@@ -345,13 +350,11 @@ static NSPersistentContainer *_persistentContainer;
     }
     // Otherwise, ...
     else
-    {
-        // clear all the changes from the context
-        [_managedObjectContext reset];
-
         // Notify delegate of the error
         [self.companyDelegate didGetDAOError:[error localizedDescription]];
-    }
+
+    // clear memory
+    [_managedObjectContext reset];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -368,14 +371,17 @@ static NSPersistentContainer *_persistentContainer;
     [request setEntity:[NSEntityDescription entityForName:@"CDCompany"
                                    inManagedObjectContext:_managedObjectContext]];
     NSMutableArray *sortArray = [NSMutableArray array];
-    [sortArray addObject:[[NSSortDescriptor alloc] initWithKey:@"displayIndex"
-                                                     ascending:YES]];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"displayIndex"
+                                                                   ascending:YES];
+    [sortArray addObject:sortDescriptor];
     [request setSortDescriptors:sortArray];
     
     // Execute the request
     NSArray *companyArray = [_managedObjectContext executeFetchRequest:request
                                                                  error:&error];
-    
+    [sortDescriptor release];
+    [request release];
+
     // if request failed then ...
     if (error)
     {
@@ -394,7 +400,7 @@ static NSPersistentContainer *_persistentContainer;
         Company *company = [[Company alloc] initWithName:moCompany.name
                                           andStockSymbol:moCompany.stockSymbol
                                               andLogoURL:moCompany.logoURL];
-        company.logoData = moCompany.logoData;
+        company.logoData = [moCompany.logoData copy];
 
         // Get the product list for the company
         NSMutableSet *productSet = [moCompany mutableSetValueForKey:@"companyToProducts"];
@@ -411,7 +417,7 @@ static NSPersistentContainer *_persistentContainer;
             Product *product = [[Product alloc] initWithName:moProduct.name
                                                       andURL:moProduct.url
                                                  andImageURL:moProduct.imageURL];
-            product.imageData = moProduct.imageData;
+            product.imageData = [moProduct.imageData copy];
             
             // Insert the product object into the product list in its displayIndex order
             [company.products replaceObjectAtIndex:moProduct.displayIndex
@@ -467,6 +473,8 @@ static NSPersistentContainer *_persistentContainer;
     NSArray *companies = [_managedObjectContext executeFetchRequest:request
                                                               error:&error];
 
+    [request release];
+
     // if unable to get the companies then ...
     if (error)
     {
@@ -493,13 +501,11 @@ static NSPersistentContainer *_persistentContainer;
                                                             to:newIndex];
     // Otherwise, ...
     else
-    {
-        // clear all the changes from the context
-        [_managedObjectContext reset];
-
         // notify delegate of the error
         [self.companyDelegate didGetDAOError:[error localizedDescription]];
-    }
+
+    // clear memory
+    [_managedObjectContext reset];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -592,7 +598,9 @@ static NSPersistentContainer *_persistentContainer;
     NSArray *productArray = [_managedObjectContext executeFetchRequest:request
                                                                  error:&error];
     CDProduct *moProduct = productArray[0];
-    
+
+    [request release];
+
     // If the request failed then ...
     if (error)
     {
@@ -677,6 +685,8 @@ static NSPersistentContainer *_persistentContainer;
     NSArray *results = [_managedObjectContext executeFetchRequest:request
                                                             error:&error];
     
+    [request release];
+
     if (error)
     {
         // notify delegate of the error
