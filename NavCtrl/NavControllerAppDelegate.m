@@ -43,7 +43,6 @@
 
     // Create and initialize the window
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    self.window.backgroundColor = UIColor.purpleColor;
     
     // Set the navigation controller as the root controller of the window
     [self.window setRootViewController:self.navigationController];

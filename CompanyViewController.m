@@ -219,11 +219,19 @@
         ProductViewController *productViewController = [[ProductViewController alloc] init];
         productViewController.company = company;
 
+        CATransition *transition = [CATransition animation];
+        transition.duration = .5;
+        transition.type = kCATransitionPush;
+        transition.subtype = kCATransitionFromLeft;
+        [self.navigationController.view.layer addAnimation:transition forKey:kCATransition];
+        
         // Display the productViewController
-        [self.navigationController pushViewController:productViewController animated:YES];
+        [self.navigationController pushViewController:productViewController animated:NO];
         
         // Clean up
         [productViewController release];
+        
+        // http://stackoverflow.com/questions/10961926/how-do-i-do-a-fade-no-transition-between-view-controllers
     }
 }
 
@@ -497,3 +505,5 @@
 }
 
 @end
+
+

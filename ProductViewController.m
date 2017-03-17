@@ -207,8 +207,15 @@
     productDetailScreen.productListMgr = _productListMgr;
     productDetailScreen.product = [_productListMgr getProductWithDisplayIndex:indexPath.row];
 
+    // Configure animation for the push
+    CATransition *transition = [CATransition animation];
+    transition.duration = 1.0;
+    transition.type = kCATransitionFade;
+    transition.subtype = kCATransitionFromLeft;
+    [self.navigationController.view.layer addAnimation:transition forKey:kCATransition];
+
     // Display the DetailViewController.
-    [self.navigationController pushViewController:productDetailScreen animated:YES];
+    [self.navigationController pushViewController:productDetailScreen animated:NO];
     
     // Clean up
     [productDetailScreen release];
@@ -370,6 +377,13 @@
     _addProductView = nil;
     [_productListMgr release];
     _tableView = nil;
+
+    // Configure animation for the pop
+    CATransition *transition = [CATransition animation];
+    transition.duration = .5;
+    transition.type = kCATransitionPush;
+    transition.subtype = kCATransitionFromRight;
+    [self.navigationController.view.layer addAnimation:transition forKey:kCATransition];
 
     // Exit current screen
     [self.navigationController popViewControllerAnimated:NO];

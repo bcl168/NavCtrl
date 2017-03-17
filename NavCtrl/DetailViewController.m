@@ -152,6 +152,13 @@
     // Clean up
     [_webView release];
 
+    // Configure animation for the pop
+    CATransition *transition = [CATransition animation];
+    transition.duration = 1.0;
+    transition.type = kCATransitionFade;
+    transition.subtype = kCATransitionFromRight;
+    [self.navigationController.view.layer addAnimation:transition forKey:kCATransition];
+
     // Exit current controller
     [self.navigationController popViewControllerAnimated:NO];
 }
